@@ -8,8 +8,8 @@ class Login extends React.Component {
 
         this.state = {
             server: 'http://localhost:4004',
-            name: '',
-            password: ''
+            name: 'jason',
+            password: 'password'
         };
     }
 
@@ -57,7 +57,7 @@ class Login extends React.Component {
                                     type="password"
                                     name="password"
                                     required={ true }
-                                    minlength={ 1 }
+                                    minlength={ 0 }
                                     value={ this.state.password }
                                     onChange={ this.handleValueChange.bind(this) }
                                 />

@@ -19,7 +19,41 @@ class RoomList extends React.Component {
                         <span className="menu-item" >
                             Room id: { this.props.currentRoomId }
                         </span>
+                        <span className="menu-item" >
+                            { this.props.rooms.map((room, index) => {
+                                return (
+
+                                    <span className="menu-item" key={ index } >
+                                        <span    className="css-truncate">
+                                        {
+
+                                        room.clients.map((client, index) => {
+                                            return (
+                                            <span className="menu-item" key={ index } >
+
+                                                <span className = "css-truncate" >
+                                                { client.name}
+                                                </span>
+
+                                                <button className="btn btn-sm menu-btn" onClick={ this.props.onRoomClick.bind(this, room) } >
+                                                Ready Up
+                                                </button>
+
+                                                <div className="css-truncate">
+                                                The { client.name} is {client.ready ? 'ready ' : ' not ready'}
+                                                </div>
+
+                                            </span>
+                                            );
+                                        }) }
+                                    </span>
+                                </span>
+                            );
+                        }) }
+                        </span>
                     </div>
+
+
                     ) : (
                         <div className="menu">
                             <span className="menu-heading">Rooms
