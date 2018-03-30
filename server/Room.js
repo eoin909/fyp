@@ -127,8 +127,8 @@ function Room ({ owner, game }) {
             clients: Array.from(clients).map(client => {
                 return {
                     id: client.getId(),
-                    name: client.getName()
-                  //  ready: client.getReady()
+                    name: client.getName(),
+                    ready: client.getReady()
                 };
             })
         };

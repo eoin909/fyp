@@ -5,7 +5,7 @@ const uuid = require('node-uuid');
 function Client ({ socket, name }) {
     const id = uuid.v4();
     let currentRoom = null;
-
+    let ready = false;
     function emit (event, data) {
         socket.emit(event, data);
     }
@@ -38,11 +38,20 @@ function Client ({ socket, name }) {
         return id;
     }
 
+    function getReady() {
+      return ready;
+    }
+
+    function setReady(boo) {
+      ready=boo;
+    }
+
     function toJSON () {
         return {
             currentRoom: currentRoom ? currentRoom.toJSON() : null,
             id,
-            name
+            name,
+            ready,
         };
     }
 
@@ -55,6 +64,8 @@ function Client ({ socket, name }) {
         on,
         send,
         setCurrentRoom,
+        getReady,
+        setReady,
         toJSON
     });
 }

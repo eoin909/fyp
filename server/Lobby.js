@@ -80,6 +80,21 @@ function Lobby ({ config }) {
             }
         });
 
+        client.on('readyRoom', (data) => {
+            const room = rooms.get(data.roomId);
+
+            if (room && client.isInRoom()) {
+              //  room.join(client);
+                //client.setCurrentRoom(room);
+
+                client.setReady(true);
+                console.log(JSON.stringify(room.toJSON()));
+                client.emit('onReadyClient', { room: room.toJSON() });
+
+                log('client joined room');
+            }
+        });
+
         client.on('leaveRoom', (data) => {
             const room = rooms.get(data.roomId);
 

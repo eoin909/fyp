@@ -35,7 +35,7 @@ class RoomList extends React.Component {
                                                 { client.name}
                                                 </span>
 
-                                                <button className="btn btn-sm menu-btn" onClick={ this.props.onRoomClick.bind(this, room) } >
+                                                <button className="btn btn-sm menu-btn" onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
                                                 Ready Up
                                                 </button>
 
@@ -95,6 +95,7 @@ class RoomList extends React.Component {
 RoomList.propTypes = {
     rooms: React.PropTypes.array.isRequired,
     onRoomClick: React.PropTypes.func.isRequired,
+    onReadyClick: React.PropTypes.func.isRequired,
     onRoomCreateClick: React.PropTypes.func.isRequired,
     onRoomLeaveClick: React.PropTypes.func.isRequired,
     currentRoomId: React.PropTypes.string

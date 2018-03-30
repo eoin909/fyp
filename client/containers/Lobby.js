@@ -70,6 +70,14 @@ class Lobby extends React.Component {
                 });
             });
 
+            socket.on('onReadyClient', (data) => {
+              console.log(JSON.stringify(data.room.clients));
+
+                this.setState({
+                    clients: data.room.clients
+                });
+            });
+
             socket.on('onLeftRoom', () => {
                 this.setState({
                     currentRoomId: null
@@ -95,6 +103,13 @@ class Lobby extends React.Component {
     onLeaveRoom (roomId) {
         if (this.state.socket) {
             this.state.socket.emit('leaveRoom', { roomId: roomId });
+        }
+    }
+
+    onReadyRoom (roomId) {
+      console.log("button pressed " + roomId);
+        if (this.state.socket) {
+            this.state.socket.emit('readyRoom', { roomId: roomId });
         }
     }
 
@@ -138,11 +153,12 @@ class Lobby extends React.Component {
                 <div className="columns">
                     <div className="one-fourth column">
                         <RoomList
-                            rooms={ this.state.rooms }
-                            onRoomClick={ this.onJoinRoom.bind(this) }
-                            onRoomCreateClick={ this.onCreateRoom.bind(this) }
-                            onRoomLeaveClick={ this.onLeaveRoom.bind(this) }
-                            currentRoomId={ this.state.currentRoomId }
+                          rooms={ this.state.rooms }
+                          onRoomClick={ this.onJoinRoom.bind(this) }
+                          onRoomCreateClick={ this.onCreateRoom.bind(this) }
+                          onRoomLeaveClick={ this.onLeaveRoom.bind(this) }
+                          onReadyClick = { this.onReadyRoom.bind(this) }
+                          currentRoomId={ this.state.currentRoomId }
                         />
                     </div>
                     <div className="three-fourths column">
