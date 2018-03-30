@@ -17,6 +17,17 @@ function Room ({ owner, game }) {
         return owner;
     }
 
+    function checkReady () {
+      let allReady = false;
+      for (const client of clients) {
+          if(!client.getReady()){
+            allReady = false;
+            break;
+          }
+          allReady=true;
+      }
+      return allReady;
+    }
     function getSize () {
         return clients.size;
     }
@@ -139,6 +150,7 @@ function Room ({ owner, game }) {
     return Object.freeze({
         getId,
         getOwner,
+        checkReady,
         getSize,
         isGameStarted,
         send,

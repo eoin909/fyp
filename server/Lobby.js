@@ -25,7 +25,7 @@ function Lobby ({ config }) {
 
         client.emit('onJoinedRoom', { room: room.toJSON() });
 
-        startGame(room);
+        //startGame(room);
 
         log('player ' + client.getId() + ' created a room with id ' + room.getId());
 
@@ -70,11 +70,15 @@ function Lobby ({ config }) {
         client.on('joinRoom', (data) => {
             const room = rooms.get(data.roomId);
 
+            // console.log("is game started ", room.isGameStarted());
+
+//            if (room && !client.isInRoom() && !room.isGameStarted()) {
+
             if (room && !client.isInRoom()) {
                 room.join(client);
                 client.setCurrentRoom(room);
 
-                client.emit('onJoinedRoom', { room: room.toJSON() });
+                room.emit('onJoinedRoom', { room: room.toJSON() });
 
                 log('client joined room');
             }
@@ -88,9 +92,17 @@ function Lobby ({ config }) {
                 //client.setCurrentRoom(room);
 
                 client.setReady(true);
-                console.log(JSON.stringify(room.toJSON()));
-                client.emit('onReadyClient', { room: room.toJSON() });
+                //console.log(JSON.stringify(room.toJSON()));
+                room.emit('onReadyClient', { room: room.toJSON() });
 
+                //console.log("size of game " + room.getSize());
+                if( room.getSize()>1){
+                  //console.log("everyone ready " + room.checkReady());
+                  if (room.checkReady()){
+                    startGame(room);
+                  };
+                  //start game
+                }
                 log('client joined room');
             }
         });

@@ -35,6 +35,8 @@ function Network ({ game, socket, pingTimeout }) {
     }
 
     function onStartGame (data) {
+
+        console.log("start game");
         const serverTime = data.serverTime;
 
         game.setTime(serverTime + netLatency);
