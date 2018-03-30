@@ -36,12 +36,8 @@ class RoomList extends React.Component {
                                                 </span>
 
                                                 <button className="btn btn-sm menu-btn" onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
-                                                Ready Up
+                                                 {client.ready ? 'Ready ' : 'Ready Up'}
                                                 </button>
-
-                                                <div className="css-truncate">
-                                                The { client.name} is {client.ready ? 'ready ' : ' not ready'}
-                                                </div>
 
                                             </span>
                                             );

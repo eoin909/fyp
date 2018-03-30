@@ -66,15 +66,17 @@ class Lobby extends React.Component {
 
             socket.on('onJoinedRoom', (data) => {
                 this.setState({
+                    rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
                     currentRoomId: data.room.id
                 });
             });
 
             socket.on('onReadyClient', (data) => {
               console.log(JSON.stringify(data.room.clients));
+              //console.log(JSON.stringify(this));
 
                 this.setState({
-                    clients: data.room.clients
+                  rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
                 });
             });
 
