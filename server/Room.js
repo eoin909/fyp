@@ -53,20 +53,24 @@ function Room ({ owner, game }) {
       /////TODO:
       //game.receiveInput
 
-
       game.pushInput({
-          client: client,
           inputs: input,
           time: inputTime,
           seq: inputSeq
       });
+      // game.pushInput({
+      //     client: client,
+      //     inputs: input,
+      //     time: inputTime,
+      //     seq: inputSeq
+      // });
 
     }
 
     function join (client) {
         clients.add(client);
 
-        if (game.isStarted()) {
+        if (!game.isStarted()) {
             const player = Player.create({
                 name: client.getName()
             });

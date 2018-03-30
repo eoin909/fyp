@@ -72,9 +72,9 @@ function Lobby ({ config }) {
 
             // console.log("is game started ", room.isGameStarted());
 
-//            if (room && !client.isInRoom() && !room.isGameStarted()) {
+            if (room && !client.isInRoom() && !room.isGameStarted()) {
 
-            if (room && !client.isInRoom()) {
+            //if (room && !client.isInRoom()) {
                 room.join(client);
                 client.setCurrentRoom(room);
 
