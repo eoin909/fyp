@@ -210,6 +210,7 @@ function ClientGame ({ options }) {
 
                 planet.setControlledBy(planetData.controlledBy);
                 planet.setCellCount(planetData.cellCount);
+                planet.setColor(planetData.color);
                 //player.setPosition(playerData.position.x, playerData.position.y);
             }
 

@@ -10,6 +10,17 @@ function Room ({ owner, game }) {
     const id = uuid.v4();
     const clients = new Set();
 
+    var colors = new Map();
+    colors.set( "red", '#FF0000');
+    colors.set( "blue",  '#0000ff');
+    colors.set( "pink", '#ff00ff');
+    colors.set( "green", '#33cc33');
+    colors.set( "Aqua",  '#00ffff');
+    colors.set( "yellow", '#FFFF00');
+
+    var it = colors.values();
+    //colors.set( "", '#FF0000', '#FFFF00', '#0000ff', '#ff00ff', '#33cc33', '#00ffff']);
+
     function getId () {
         return id;
     }
@@ -116,9 +127,11 @@ function Room ({ owner, game }) {
         game.addPlanets();
 
         for (const client of clients) {
+          let color =  it.next().value;
           const virus = Virus.create({
               id: client.getId(),
-              name: client.getName()
+              name: client.getName(),
+              color
           });
 
             //game.addPlanets(map);
@@ -158,6 +171,18 @@ function Room ({ owner, game }) {
                     ready: client.getReady()
                 };
             })
+        };
+    }
+
+    function makeIterator(array) {
+        var nextIndex = 0;
+
+        return {
+           next: function() {
+               return nextIndex < array.length ?
+                   {value: array[nextIndex++], done: false} :
+                   {done: true};
+           }
         };
     }
 
