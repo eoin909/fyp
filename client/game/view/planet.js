@@ -1,6 +1,6 @@
 'use strict';
-
-const COLOR = '#00FF00';
+//white neutral
+const COLOR = '#FFFFFF';
 
 function draw (ctx, planets) {
   //console.log("size of render planets " + planets.length);
@@ -13,31 +13,39 @@ function draw (ctx, planets) {
       //    console.log("neutral");
           ctx.fillStyle = COLOR;
           ctx.strokeStyle= COLOR;
-
         }
+
         const { x, y } = planet.getPosition();
-      //  console.log("id " + planet.getId() + " x: " + x + " y: " + y);
-
-      //  console.log("x: " + x + " y: " + y);
-        const radius = 20;
+        const radius = planet.getRadius();
 
         ctx.beginPath();
-      //  ctx.strokeStyle= COLOR;
-        ctx.arc(x,y, radius,0,2*Math.PI);
+        ctx.arc(x, y, radius, 0, 2 * Math.PI);
         ctx.stroke();
+
         ctx.beginPath();
-        ctx.fillText("cell: " + planet.getCellCount() , x,y);
+        ctx.arc(x,y, radius*0.5,0,2*Math.PI);
         ctx.fill();
 
-//console.log("render state " + planet.getSelectedBy());
+
+        ctx.beginPath();
+        ctx.fillStyle = "#000000";
+        let cellCount = planet.getCellCount();
+
+        if(cellCount<100){
+          ctx.fillText(cellCount, x-6.5,y+4);
+        }else{
+          ctx.fillText(cellCount, x-10,y+4);
+        }
+
+        ctx.fill();
+
+
         if (planet.getSelectedBy()!==null){
           ctx.beginPath();
-          ctx.strokeStyle= '#FFFF00';
+          ctx.strokeStyle= "#FFFF00";
           ctx.arc(x,y, radius+3,0,2*Math.PI);
           ctx.stroke();
         }
-
-//        ctx.fillRect(x, y, width, height);
     }
 }
 

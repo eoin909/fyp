@@ -95,17 +95,18 @@ function Room ({ owner, game }) {
     }
 
     function leave (client) {
-        if (game.isStarted) {
-            const player = game.getNetwork().getPlayerByClient(client);
+        if (game.isStarted()) {
+          //  const player = game.getNetwork().getPlayerByClient(client);
 
             for (const roomClient of clients) {
                 if (roomClient !== client) {
-                    roomClient.emit('playerLeft', player.getId());
+                    roomClient.emit('playerLeft', client.getId());
                 }
             }
 
-            game.removePlayer(player.getId());
-            game.getNetwork().removeClientPlayer(client);
+            game.removePlayer(client.getId());
+            //game.getNetwork().removeClientPlayer(client);
+            game.getNetwork().removeClientPlanetSystem(client);
         }
 
         clients.delete(client);

@@ -200,8 +200,8 @@ function ClientGame ({ options }) {
         if (true) {
 
 
-          console.log("onServerUpdate");
-          console.log(data);
+        //  console.log("onServerUpdate");
+        //  console.log(data);
             // localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
 
             for (const planetData of data.planets) {

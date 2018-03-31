@@ -21,6 +21,10 @@ function Mouse (game1) {
       if(planetSelected.size>1){
         processInputs(planetSelected);
       }
+
+      for (const planet of planetSelected.values()){
+        planet.setSelectedBy(null);
+      }
       planetSelected.clear();
       clicked=false;
     }
@@ -38,9 +42,10 @@ function Mouse (game1) {
             const { x, y } = planet.getPosition();
             // console.log("planet x : " + x + "planet y : " + y);
             // const radius = planet.getRadius();
-            const radius = 20;
+            const radius = planet.getRadius();
             //console.log("localPlayerId " + localPlayerId.shift());
             const id = localPlayerId.shift();
+            
             let mouse = getMousePos(event)
 
             if(Math.abs(x-mouse.x)<=radius){
