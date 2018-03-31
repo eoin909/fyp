@@ -2,6 +2,7 @@
 
 const uuid = require('node-uuid');
 const Player = require('./ServerPlayer');
+const Virus = require('./ServerVirus');
 const debug = require('debug');
 const log = debug('game:server/Room');
 
@@ -48,16 +49,17 @@ function Room ({ owner, game }) {
         }
     }
 
-    function receiveClientInput (client, input, inputTime, inputSeq) {
-      //  game.getNetwork().receiveClientInput(...args);
-      /////TODO:
-      //game.receiveInput
+  //  function receiveClientInput (client, input, inputTime, inputSeq) {
 
-      game.pushInput({
-          inputs: input,
-          time: inputTime,
-          seq: inputSeq
-      });
+    function receiveClientInput (...args) {
+        game.getNetwork().receiveClientInput(...args);
+      //game.receiveInput
+      // console.log("data received");
+      // game.pushInput({
+      //     inputs: input,
+      //     time: inputTime,
+      //     seq: inputSeq
+      // });
       // game.pushInput({
       //     client: client,
       //     inputs: input,
@@ -71,20 +73,22 @@ function Room ({ owner, game }) {
         clients.add(client);
 
         if (!game.isStarted()) {
-            const player = Player.create({
+
+            const virus = Virus.create({
+                id: client.getId(),
                 name: client.getName()
             });
+            //
+            // game.addVirus(virus);
+            // game.getNetwork().addClientPlanetSystem(client, game.getPlanetSystem());
+            //
+            // log('joining game');
 
-            game.addPlayer(player);
-            game.getNetwork().addClientPlayer(client, player);
-
-            log('joining game');
-
-            client.emit('startGame', game.getStateForPlayer(player));
+          //  client.emit('startGame', game.getStateForPlanet(planet));
 
             for (const roomClient of clients) {
                 if (roomClient !== client) {
-                    roomClient.emit('playerJoined', player.toJSON());
+                    roomClient.emit('playerJoined', virus.toJSON());
                 }
             }
         }
@@ -108,19 +112,26 @@ function Room ({ owner, game }) {
     }
 
     function startGame () {
-        for (const client of clients) {
-            const player = Player.create({
-                name: client.getName()
-            });
+        game.addPlanets();
 
-            game.addPlayer(player);
-            game.getNetwork().addClientPlayer(client, player);
+        for (const client of clients) {
+          const virus = Virus.create({
+              id: client.getId(),
+              name: client.getName()
+          });
+
+            //game.addPlanets(map);
+
+            game.addVirus(virus)
+            game.getNetwork().addClientPlanetSystem(client, game.getPlanetSystem());
+
+            //game.getNetwork().addClientPlanet(client, virus);
         }
 
         for (const client of clients) {
-            const player = game.getNetwork().getPlayerByClient(client);
-
-            client.emit('startGame', game.getStateForPlayer(player));
+            //const virus = game.getNetwork().getVirusByClient(client);
+            //console.log("print out client id " + client.getId());
+            client.emit('startGame', game.getStateForPlanetSystem(client.getId()));
         }
 
         log('game started');

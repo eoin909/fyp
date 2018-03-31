@@ -130,14 +130,17 @@ function Lobby ({ config }) {
 
         client.on('message', (message) => {
             const parts = message.split('.');
-
+            //console.log("spliting up data");
             const inputCommands = parts[0].split('-');
             const inputTime = parts[1].replace('-', '.');
             const inputSeq = parts[2];
 
             const room = client.getCurrentRoom();
 
-            if (room && room.isGameStarted()) {
+/////change this back after fix
+            if (room) {
+
+            // if (room && room.isGameStarted()) {
                 room.receiveClientInput(client, inputCommands, inputTime, inputSeq);
             } else {
                 log('no room to receive input');

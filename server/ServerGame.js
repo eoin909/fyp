@@ -10,7 +10,10 @@ function ServerGame ({ options }) {
     const networkLoop = Timer.create({
         interval: options.networkTimestep,
         onUpdate () {
-            network.sendUpdates(game.getStateForPlayer);
+            network.sendUpdates(game.getStateForPlanetSystem);
+          //  console.log(game.getStateForPlayer);
+            //console.log(JSON.stringify(game.getStateForPlayer));
+            //console.log("servergame update network");
 
             game.clearEvents();
         }
@@ -28,7 +31,16 @@ function ServerGame ({ options }) {
         game.addPlayer(player);
     }
 
+    function addPlanet (planet) {
+        const { x, y } = options.playerPositions[0];
+
+        planet.setPosition(x, y);
+
+        game.planetPlayer(planet);
+    }
+
     function start () {
+        console.log("game start");
         networkLoop.start();
 
         game.start();
@@ -41,9 +53,13 @@ function ServerGame ({ options }) {
     }
 
     function onUpdate (delta) {
-        for (const player of game.getPlayers()) {
-            player.update(delta);
-        }
+        //console.log("server game");
+        //game.update(delta);
+        // for (const player of game.getPlayers()) {
+        //   console.log("update server game");
+        //     player.update(delta);
+        // }
+        game.planetSystemUpdate(delta);
     }
 
     game.setUpdateHandler(onUpdate);

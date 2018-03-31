@@ -4,11 +4,19 @@ function network () {
     const playerClients = new Map();
     const clientPlayers = new Map();
 
+    const planetSystemClients = new Map();
+    const clientPlanetSystem = new Map();
+
     function addClientPlayer (client, player) {
         playerClients.set(player, client);
         clientPlayers.set(client, player);
     }
 
+    function addClientPlanetSystem(client, planetSystem) {
+      planetSystemClients.set(planetSystem, client);
+      clientPlanetSystem.set(client, planetSystem)
+
+    }
     function removeClientPlayer (client) {
         const player = clientPlayers.get(client);
 
@@ -16,21 +24,21 @@ function network () {
         playerClients.delete(player);
     }
 
-    function sendUpdates (getStateForPlayer) {
-        for (const player of clientPlayers.values()) {
-            const client = playerClients.get(player);
-
-            client.emit('onServerUpdate', getStateForPlayer(player));
+    function sendUpdates (getStateForPlanetSystem) {
+      console.log("sendUpdates " + clientPlanetSystem.size);
+        for (const client of clientPlanetSystem.keys()) {
+          //  const client = planetSystemClients.get(planetSys);
+//console.log(JSON.stringify(getStateForPlayer(player)));
+            client.emit('onServerUpdate', getStateForPlanetSystem(client.getId()));
         }
     }
 
     function receiveClientInput (client, input, inputTime, inputSeq) {
         console.log("received data")
         console.log(input);
-        const player = clientPlayers.get(client);
-        console.log(player.getId());
-        
-        player.pushInput({
+        const planetSystem = clientPlanetSystem.get(client);
+
+        planetSystem.pushInput({
             inputs: input,
             time: inputTime,
             seq: inputSeq
@@ -44,7 +52,14 @@ function network () {
         getClientByPlayer (player) {
             return playerClients.get(player);
         },
+        getPlanetSystemByClient (client) {
+            return clientPlanetSystem.get(client);
+        },
+        getClientByPlanetSystem (player) {
+            return planetSystemClients.get(player);
+        },
         addClientPlayer,
+        addClientPlanetSystem,
         removeClientPlayer,
         sendUpdates,
         receiveClientInput

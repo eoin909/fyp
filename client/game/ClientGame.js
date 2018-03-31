@@ -66,7 +66,7 @@ function ClientGame ({ options }) {
     function setLocalPlayer (player) {
         localPlayer = player;
         //console.log("calljlsdjfa   " + canvasPos);
-        game.setLocalPlayerId(player.getId());
+        game.setLocalPlayerId(player);
     }
 
     function getServerTime () {
@@ -97,7 +97,7 @@ function ClientGame ({ options }) {
 
     function updateInput () {
 
-        inputHandler.setLocalPlayer(localPlayer.getId());
+        inputHandler.setLocalPlayer(localPlayer);
         const input = inputHandler.getInput();
         if (input.length > 0 && localPlayer) {
           console.log("input " + input);
@@ -105,13 +105,15 @@ function ClientGame ({ options }) {
             // Update what sequence we are on now
             inputSeq += 1;
 
-            game.pushInput({
-                inputs: input,
-                time: game.getTime(),
-                seq: inputSeq
-            });
+            // game.pushInput({
+            //     inputs: input,
+            //     time: game.getTime(),
+            //     seq: inputSeq
+            // });
 
             if (network) {
+
+              console.log("sending data");
                 let data = '';
                 data += input + '.';
                 data += game.getTime().toString().replace('.', '-') + '.';
@@ -198,16 +200,20 @@ function ClientGame ({ options }) {
         if (true) {
 
 
-
+          console.log("onServerUpdate");
+          console.log(data);
             // localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
 
-            // for (const playerData of data.players) {
-            //     const player = game.getPlayerById(playerData.id);
+            for (const planetData of data.planets) {
 
-            //     player.setPosition(playerData.position.x, playerData.position.y);
-            // }
+                const planet = game.getPlanetById(planetData.id);
 
-            processEventUpdates(data);
+                planet.setControlledBy(planetData.controlledBy);
+                planet.setCellCount(planetData.cellCount);
+                //player.setPosition(playerData.position.x, playerData.position.y);
+            }
+
+          //  processEventUpdates(data);
         } else {
             // Cache the data from the server,
             // and then play the timeline
@@ -238,6 +244,8 @@ function ClientGame ({ options }) {
     }
 
     function processNetworkUpdates (interpolation) {
+
+      console.log("serverUpdates");
         if (serverUpdates.length === 0) {
             return;
         }
@@ -360,9 +368,9 @@ function ClientGame ({ options }) {
     function onUpdate (delta) {
         updateInput();
 
-        if (options.clientPrediction && localPlayer) {
-            localPlayer.update(delta);
-        }
+        // if (options.clientPrediction && localPlayer) {
+        //     localPlayer.update(delta);
+        // }
     }
 
     function onDraw (interpolation) {

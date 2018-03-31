@@ -9,14 +9,15 @@ function Network ({ game, socket, pingTimeout }) {
     let netLatency = 0;
 
     function onPlayerJoined (playerData) {
-        const player = Player.create({
+        const planet = Planet.create({
             id: playerData.id,
-            name: playerData.name,
-            x: playerData.position.x,
-            y: playerData.position.y
+            controlledBy: playerData.controlledBy,
+            x: playerData.x,
+            y: playerData.y,
+            cellCount: playerData.cellCount
         });
-
-        game.addPlayer(player);
+//{"id":0,"x":60,"y":245,"controlledBy":"neutral","radius":20,"cellCount":50}
+        game.addPlanet(planet);
     }
 
     function onPlayerLeft (playerId) {
@@ -45,82 +46,84 @@ function Network ({ game, socket, pingTimeout }) {
 
         game.clearPlayers();
 
-        for (const playerData of data.players) {
+        console.log(data);
+        console.log(JSON.stringify(data));
+        for (const playerData of data.planets) {
             onPlayerJoined(playerData);
         }
 
-        const localPlayer = Player.create({
-            id: data.ownPlayer.id,
-            name: data.ownPlayer.name,
-            x: data.ownPlayer.position.x,
-            y: data.ownPlayer.position.y
-        });
+        // const localPlayer = Player.create({
+        //     id: data.ownPlayer.id,
+        //     name: data.ownPlayer.name,
+        //     x: data.ownPlayer.position.x,
+        //     y: data.ownPlayer.position.y
+        // });
+        //
+        // game.addPlayer(localPlayer);
+        game.setLocalPlayer(data.localClientId);
 
-        game.addPlayer(localPlayer);
-        game.setLocalPlayer(localPlayer);
-
-        const planetMap = Planet.create(
-          {
-            id: 0,
-            cellCount: 50,
-            controlledBy: 'neutral',
-          //  selectedBy: 'nobody',
-            x: 60,
-            y: 245
-          });
-
-        game.addPlanets(planetMap);
-
-      const planetMap1 = Planet.create(
-          {
-            id:1,
-            cellCount: 50,
-            controlledBy: 'neutral',
-          //  selectedBy: 'nobody',
-            x: 90,
-            y: 60
-          }
-        );
-
-      game.addPlanets(planetMap1);
-
-      const planetMap2 = Planet.create(
-        {
-          id:2,
-          cellCount: 50,
-          controlledBy: 'neutral',
-          //selectedBy: '',
-          x: 260,
-          y: 245
-        }
-      );
-
-      game.addPlanets(planetMap2);
-
-      const planetMap3 = Planet.create(
-        {
-          id:3,
-          cellCount: 50,
-          controlledBy: 'neutral',
-          //selectedBy: 'nobody',
-          x: 90,
-          y: 305
-        }
-      );
-
-      game.addPlanets(planetMap3);
-      const planetMap4 = Planet.create(
-        {
-          id:4,
-          cellCount: 50,
-          controlledBy: localPlayer.getId(),
-        //  selectedBy: 'nobody',
-          x: 350,
-          y: 350
-        }
-      );
-
-       game.addPlanets(planetMap4);
+      //   const planetMap = Planet.create(
+      //     {
+      //       id: 0,
+      //       cellCount: 50,
+      //       controlledBy: 'neutral',
+      //     //  selectedBy: 'nobody',
+      //       x: 60,
+      //       y: 245
+      //     });
+      //
+      //   game.addPlanets(planetMap);
+      //
+      // const planetMap1 = Planet.create(
+      //     {
+      //       id:1,
+      //       cellCount: 50,
+      //       controlledBy: 'neutral',
+      //     //  selectedBy: 'nobody',
+      //       x: 90,
+      //       y: 60
+      //     }
+      //   );
+      //
+      // game.addPlanets(planetMap1);
+      //
+      // const planetMap2 = Planet.create(
+      //   {
+      //     id:2,
+      //     cellCount: 50,
+      //     controlledBy: 'neutral',
+      //     //selectedBy: '',
+      //     x: 260,
+      //     y: 245
+      //   }
+      // );
+      //
+      // game.addPlanets(planetMap2);
+      //
+      // const planetMap3 = Planet.create(
+      //   {
+      //     id:3,
+      //     cellCount: 50,
+      //     controlledBy: 'neutral',
+      //     //selectedBy: 'nobody',
+      //     x: 90,
+      //     y: 305
+      //   }
+      // );
+      //
+      // game.addPlanets(planetMap3);
+      // const planetMap4 = Planet.create(
+      //   {
+      //     id:4,
+      //     cellCount: 50,
+      //     controlledBy: localPlayer.getId(),
+      //   //  selectedBy: 'nobody',
+      //     x: 350,
+      //     y: 350
+      //   }
+      // );
+      //
+      //  game.addPlanets(planetMap4);
 
       // const planetMap = Planet.create({
       //     id: 0,
