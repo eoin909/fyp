@@ -173,9 +173,6 @@ class Lobby extends React.Component {
                                                 gameClient={ this.state.gameClient }
                                             />
                                         </div>
-                                        <Stats
-                                            game={ this.state.gameClient }
-                                        />
                                     </div>
                                 ) : (
                                 <div className="blankslate mb-5">

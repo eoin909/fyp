@@ -16,9 +16,13 @@ function draw (ctx, planets) {
 //         }
 
         const { x, y } = planet.getPosition();
-        const radius = planet.getRadius();
         const cellCount = planet.getCellCount();
+        let radius = planet.getRadius() + cellCount*0.2;
 
+        if(radius > 45)
+        radius=45;
+
+        //const cellCount = planet.getCellCount();
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, 2 * Math.PI);
         ctx.stroke();
