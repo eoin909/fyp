@@ -47,11 +47,7 @@ function draw (ctx, planets) {
         const control = planet.getControlledBy();
         if(typeof control !== "undefined")
         {
-
-
           if (control !== 'neutral'){
-          //  console.log("control " + control);
-          //  console.log("planet.getId() " +  planet.getId());
             if(bar.has(control)){
               let value = bar.get(control);
               bar.set(control, (value + cellCount));
@@ -60,19 +56,28 @@ function draw (ctx, planets) {
               colorMap.set(control, planet.getColor());
             }
             total += cellCount;
-
-
           }
         }
 
         if (planet.getSelectedBy()!==null){
           ctx.beginPath();
           ctx.strokeStyle= COLOR;
-          ctx.arc(x,y, radius+3,0,2*Math.PI);
+          ctx.arc(x,y, radius+5, 0, 2*Math.PI);
           ctx.stroke();
-          //console.log("planet.getSelectedBy() " + planet.getSelectedBy());
-          lineToArray[planet.getSelectedBy()] = planet;
-          //lineToMap.set(planet.getSelectedBy(), planet);
+        //  console.log("planet.getSelectedBy() " + planet.getSelectedBy());
+          // console.log("lineToArray " + lineToArray);
+          // console.log("lineToArray.length " + lineToArray.length);
+          //
+          // lineToArray[planet.getSelectedBy()] = planet;
+          //
+          // console.log("lineToArray.length " + lineToArray.length);
+          let key = planet.getSelectedBy();
+          if(key ==='target' || key === 'join'){
+            lineToMap.set(key, planet);
+          }
+          else{
+            lineToMap.set(lineToMap.size, planet);
+          }
         }
       }
       let posX = 0
@@ -121,29 +126,100 @@ function draw (ctx, planets) {
         //   }
         // }
 
-        for (var i = 0; i < lineToArray.length; i++) {
-          console.log("lineArray " + lineToArray.length);
-      //    if( lineToMap.has( (i).toString() ) && lineToMap.has( (i + 1).toString() ) ){
-            //console.log(lineToMap.get(i));
 
 
-            let planet1 = lineToArray[i];
-            let planet2 =  lineToArray[i+1];
 
-            if(typeof planet1 !== "undefined" && typeof planet2 !== "undefined"){
-              const {x1 , y1} = lineToArray[i].getPosition();
-              const {x2 , y2} = lineToArray[i+1].getPosition();
-              console.log("inside loop");
-              console.log('x2 ' + x2  + " y2 " + y2);
-              console.log('x1 ' + x1  + " y1 " + y1);
+
+
+      //   for (var i = 0; i < lineToArray.length; i++) {
+      //     console.log("lineArray " + lineToArray.length);
+      // //    if( lineToMap.has( (i).toString() ) && lineToMap.has( (i + 1).toString() ) ){
+      //       //console.log(lineToMap.get(i));
+      //
+      //
+      //       let planet1 = lineToArray[i];
+      //       let planet2 =  lineToArray[i+1];
+      //
+      //       if(typeof planet1 !== "undefined" && typeof planet2 !== "undefined"){
+      //         const x1 = lineToArray[i].getX();
+      //         const y1 = lineToArray[i].getY();
+      //         const x2 = lineToArray[i+1].getX();
+      //         const y2 = lineToArray[i+1].getY();
+      //         //const {x2 , y2} = lineToArray[i+1].getPosition();
+      //         // console.log("inside loop");
+      //         // console.log('x2 ' + x2  + " y2 " + y2);
+      //         // console.log('x1 ' + x1  + " y1 " + y1);
+      //
+      //         ctx.strokeStyle= COLOR;
+      //         ctx.beginPath();
+      //         ctx.moveTo(x1,y1);
+      //         ctx.lineTo(x2,y2);
+      //         ctx.stroke();
+      //     }
+      //  }
+      let target = null;
+
+      if (lineToMap.has('target')){
+        target = lineToMap.get('target');
+      }else {
+        target = lineToMap.get('join');
+      }
+
+if(target !== null && typeof target !== 'undefined'){
+  const x1 = target.getX();
+  const y1 = target.getY();
+  const r1 = target.getRenderingRadius();
+      for (const mapKeys of lineToMap.keys() ) {
+        //console.log("lineArray " + lineToArray.length);
+    //    if( lineToMap.has( (i).toString() ) && lineToMap.has( (i + 1).toString() ) ){
+          //console.log(lineToMap.get(i));
+          let planet1 = lineToMap.get(mapKeys);
+planet1.getId();
+target.getId();
+
+          if (planet1.getId() !== target.getId() ){
+
+            //let planet1 = lineToArray[i];
+            //let planet2 =  lineToArray[i+1];
+
+            //if(typeof planet1 !== "undefined" && typeof planet2 !== "undefined"){
+            const x2 = planet1.getX();
+            const y2 = planet1.getY();
+              let angle1 = calAngle( x1 , y1, x2 , y2);
+              let angle2 = calAngle( x2 , y2, x1 , y1,);
+              let newPositonsTarget = getNewPositions(r1, angle1);
+              let newPositonsPlanet = getNewPositions(planet1.getRenderingRadius(), angle2);
+
+
+              //const {x2 , y2} = lineToArray[i+1].getPosition();
+              // console.log("inside loop");
+              // console.log('x2 ' + x2  + " y2 " + y2);
+              // console.log('x1 ' + x1  + " y1 " + y1);
 
               ctx.strokeStyle= COLOR;
               ctx.beginPath();
-              ctx.moveTo(x1,y1);
-              ctx.lineTo(x2,y2);
+              ctx.moveTo( (newPositonsTarget.get('x') + x1), (newPositonsTarget.get('y') + y1) );
+              ctx.lineTo( (newPositonsPlanet.get('x') + x2), (newPositonsPlanet.get('y') + y2) );
               ctx.stroke();
-          }
-       }
+          //  }
+        }
+     }
+}
+
+function getNewPositions(radius, angle){
+  let posMap = new Map();
+  posMap.set("x" , (radius * Math.cos(angle)) );
+  posMap.set("y" , (radius * Math.sin(angle)) );
+  return posMap;
+  // const angle = calAngle( x1 , y1, x2 , y2);
+  // const distance = calDistance( x1 , y1, x2 , y2);
+}
+
+
+function calAngle (posX1, posY1, posX2, posY2) {
+  return ( Math.atan2( (posY2 - posY1), (posX2 - posX1) ) );
+}
+
   // }
 }
 

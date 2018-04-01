@@ -100,7 +100,7 @@ function ClientGame ({ options }) {
         inputHandler.setLocalPlayer(localPlayer);
         const input = inputHandler.getInput();
         if (input.length > 0 && localPlayer) {
-          console.log("input " + input);
+        //  console.log("input " + input);
 
             // Update what sequence we are on now
             inputSeq += 1;
@@ -113,7 +113,7 @@ function ClientGame ({ options }) {
 
             if (network) {
 
-              console.log("sending data");
+            //  console.log("sending data");
                 let data = '';
                 data += input + '.';
                 data += game.getTime().toString().replace('.', '-') + '.';
@@ -129,8 +129,8 @@ function ClientGame ({ options }) {
       const bullets = new Map();
         for (const eventData of data.events) {
         //  console.log("color eventData " + eventData.bulletColor);
-        console.log(" eventData x " + eventData.x);
-        console.log(" eventData y " + eventData.y);
+        // console.log(" eventData x " + eventData.x);
+        // console.log(" eventData y " + eventData.y);
             const bullet = Bullet.create({
               x: eventData.x,
               y: eventData.y,
@@ -222,7 +222,7 @@ function ClientGame ({ options }) {
                 planet.setColor(planetData.color);
                 //player.setPosition(playerData.position.x, playerData.position.y);
             }
-            console.log("event data " + data.events);
+            //console.log("event data " + data.events);
             processEventUpdates(data);
         } else {
             // Cache the data from the server,
@@ -255,7 +255,7 @@ function ClientGame ({ options }) {
 
     function processNetworkUpdates (interpolation) {
 
-      console.log("serverUpdates");
+    //  console.log("serverUpdates");
         if (serverUpdates.length === 0) {
             return;
         }

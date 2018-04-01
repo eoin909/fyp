@@ -65,25 +65,33 @@ function Mouse (game1) {
               //    console.log("my planet");
                   //planet.setSelectedBy()
                   planetSelected.set(planet.getId(), planet);
+                  if(planetSelected.has('join')){
+                    planetSelected.get("join").setSelectedBy('draw');
+                  }
                   planetSelected.set("join", planet);
-                  planet.setSelectedBy(counter);
-                  counter++;
+                  planet.setSelectedBy('draw');
+                //  counter++;
               //    console.log(planetSelected.size);
-                //  console.log("join");
+                //  console.log("counter " + counter);
                 //  planet.setSelectedBy(id);
                 }
                 else {
                       if(planetSelected.has('target')){
-                        planetSelected.delete("join");
+                        if (planetSelected.has('join')){
+                          planetSelected.get("join").setSelectedBy('draw');
+                          planetSelected.delete("join");
+                        }
                         let fuckyou =  planetSelected.get("target");
                         fuckyou.setSelectedBy(null);
-                        counter--;
+                      //  counter--;
                       }
 
                       planetSelected.set("target", planet);
                   //    console.log(planetSelected.size);
-                      planet.setSelectedBy(counter);
-                      counter++
+                      planet.setSelectedBy("target");
+                    //  counter++
+                    //  console.log("counter " + counter);
+
                   //    console.log("target");
                     }
                 // console.log('mouseX = ' + event.clientX);
