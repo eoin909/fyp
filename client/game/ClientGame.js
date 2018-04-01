@@ -3,7 +3,7 @@
 const InputHandler = require('./input');
 const AbstractGame = require('../../lib/AbstractGame');
 const Ghost = require('./ClientPlayer');
-
+const Bullet = require('../../lib/RenderBullet');
 function interpolate (p, n, interpolation) {
     interpolation = Math.max(0, Math.min(1, interpolation));
 
@@ -126,11 +126,20 @@ function ClientGame ({ options }) {
     function processEventUpdates (data) {
       // console.log(data);
       // console.log(typeof data);
+      const bullets = new Map();
         for (const eventData of data.events) {
-            game.onNetworkEvent({
-                ...eventData
+        //  console.log("color eventData " + eventData.bulletColor);
+        console.log(" eventData x " + eventData.x);
+        console.log(" eventData y " + eventData.y);
+            const bullet = Bullet.create({
+              x: eventData.x,
+              y: eventData.y,
+              color: eventData.bulletColor,
+              cellCount: eventData.cellCount
             });
+        bullets.set(bullets.size, bullet);
         }
+      game.addRenderBullets(bullets);
     }
 
     function clientPrediction () {
@@ -201,7 +210,7 @@ function ClientGame ({ options }) {
 
 
         //  console.log("onServerUpdate");
-        //  console.log(data);
+          //console.log(data);
             // localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
 
             for (const planetData of data.planets) {
@@ -213,8 +222,8 @@ function ClientGame ({ options }) {
                 planet.setColor(planetData.color);
                 //player.setPosition(playerData.position.x, playerData.position.y);
             }
-
-          //  processEventUpdates(data);
+            console.log("event data " + data.events);
+            processEventUpdates(data);
         } else {
             // Cache the data from the server,
             // and then play the timeline

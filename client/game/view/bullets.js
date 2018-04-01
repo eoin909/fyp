@@ -1,17 +1,13 @@
 'use strict';
 
-const COLOR = '#00FF00';
-
 function draw (ctx, bullets) {
-    for (const bullet of bullets) {
-        ctx.fillStyle = COLOR;
-
+    for (const bullet of bullets.values()) {
         const { x, y } = bullet.getPosition();
-
-        const width = 4;
-        const height = 4;
-
-        ctx.fillRect(x, y, width, height);
+        let radius = bullet.getCellCount()*0.05 + 2;
+        ctx.fillStyle = bullet.getColor();
+        ctx.beginPath();
+        ctx.arc(x,y, radius,0,2*Math.PI);
+        ctx.fill();
     }
 }
 

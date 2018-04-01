@@ -33,7 +33,7 @@ function Renderer (ctx, game, options = {}) {
             }
         }
 
-        drawBullets(ctx, game.getBullets());
+        drawBullets(ctx, game.getRenderBullets());
         drawPlanets(ctx, game.getPlanets());
 
     }

@@ -9,12 +9,13 @@ function Mouse (game1) {
 
   const game = game1;
   const canvas =  null;
+  let counter = 0;
   let inputs = [];
   const planetSelected = new Map();
 
   function click (event) {
         clicked=true;
-        console.log("x:" + getMousePos(event).x +" y: "+ getMousePos(event).y);
+        //console.log("x:" + getMousePos(event).x +" y: "+ getMousePos(event).y);
   }
 
     function unclick (event) {
@@ -28,6 +29,7 @@ function Mouse (game1) {
       }
       planetSelected.clear();
       clicked=false;
+      counter = 0;
     }
 
     function moveFunction (event) {
@@ -54,36 +56,39 @@ function Mouse (game1) {
 
 
                 // console.log("planet x : " + x + "planet y : " + y);
-                console.log("planet.getControlledBy  " + planet.getControlledBy());
+              //  console.log("planet.getControlledBy  " + planet.getControlledBy());
                 //console.log("localPlayerId " + localPlayerId.shift());
-                console.log("localPlayerId " + id);
+              //  console.log("localPlayerId " + id);
                 if(planet.getControlledBy()===id){
                   // console.log("planet.getControlledBy  " + planet.getControlledBy);
                   // console.log("localPlayerId " + localPlayerId);
-                  console.log("my planet");
+              //    console.log("my planet");
                   //planet.setSelectedBy()
                   planetSelected.set(planet.getId(), planet);
                   planetSelected.set("join", planet);
-                  planet.setSelectedBy((planetSelected.size-1).toString());
-
-                  console.log(planetSelected.size);
-                  console.log("join");
+                  planet.setSelectedBy(counter);
+                  counter++;
+              //    console.log(planetSelected.size);
+                //  console.log("join");
                 //  planet.setSelectedBy(id);
                 }
                 else {
-                  if(planetSelected.has('target')){
-                    planetSelected.delete("join");
-                let fuckyou =  planetSelected.get("target");
-                fuckyou.setSelectedBy(null);
-              }
-                  planetSelected.set("target", planet);
-                  console.log(planetSelected.size);
-                  planet.setSelectedBy((planetSelected.size).toString());
-                  console.log("target");
-                }
+                      if(planetSelected.has('target')){
+                        planetSelected.delete("join");
+                        let fuckyou =  planetSelected.get("target");
+                        fuckyou.setSelectedBy(null);
+                        counter--;
+                      }
+
+                      planetSelected.set("target", planet);
+                  //    console.log(planetSelected.size);
+                      planet.setSelectedBy(counter);
+                      counter++
+                  //    console.log("target");
+                    }
                 // console.log('mouseX = ' + event.clientX);
                 // console.log('mouseY = ' + event.clientY);
-                 console.log("_______HIT _________");
+              //   console.log("_______HIT _________");
               }
             }
             // console.log('mouseX = ' + event.clientX);

@@ -3,10 +3,10 @@
 const COLOR = '#FFFF00';
 
 function draw (ctx, planets) {
-    let lineToMap = new Map();
-
-    let bar = new Map();
-    let colorMap = new Map();
+    const lineToMap = new Map();
+    let lineToArray = [];
+    const bar = new Map();
+    const colorMap = new Map();
 
 
 
@@ -45,19 +45,24 @@ function draw (ctx, planets) {
         ctx.fill();
 
         const control = planet.getControlledBy();
+        if(typeof control !== "undefined")
+        {
 
-        if (control !== 'neutral'){
 
-          if(bar.has(control)){
-            let value = bar.get(control);
-            bar.set(control, (value + cellCount));
-          } else {
-            bar.set(control, cellCount);
-            colorMap.set(control, planet.getColor());
+          if (control !== 'neutral'){
+          //  console.log("control " + control);
+          //  console.log("planet.getId() " +  planet.getId());
+            if(bar.has(control)){
+              let value = bar.get(control);
+              bar.set(control, (value + cellCount));
+            } else {
+              bar.set(control, cellCount);
+              colorMap.set(control, planet.getColor());
+            }
+            total += cellCount;
+
+
           }
-          total += cellCount;
-
-
         }
 
         if (planet.getSelectedBy()!==null){
@@ -66,33 +71,38 @@ function draw (ctx, planets) {
           ctx.arc(x,y, radius+3,0,2*Math.PI);
           ctx.stroke();
           //console.log("planet.getSelectedBy() " + planet.getSelectedBy());
-          //array[planet.getSelectedBy()] = planet;
-          lineToMap.set(planet.getSelectedBy(), planet);
+          lineToArray[planet.getSelectedBy()] = planet;
+          //lineToMap.set(planet.getSelectedBy(), planet);
         }
       }
       let posX = 0
+    //    console.log("bar.size " + bar.size);
       for (const key of bar.keys()) {
-        console.log("key " + key);
+      //  console.log("key " + key);
 
-        console.log("posX " + posX);
-        console.log("total " + total);
+      //  console.log("posX " + posX);
+      //  console.log("total " + total);
         ctx.beginPath();
         ctx.moveTo(posX,0);
-        console.log("bar.get(key) " +bar.get(key));
+        //console.log("bar.get(key) " +bar.get(key));
         ctx.lineWidth=10;
         posX += (bar.get(key)/total)*1200;
-        console.log("posX " + posX);
-        console.log("colorMap " + colorMap.get(key));
+        //console.log("posX " + posX);
+      //  console.log("colorMap " + colorMap.get(key));
         ctx.strokeStyle= colorMap.get(key);
 
         ctx.lineTo(posX,0);
         ctx.stroke();
         ctx.lineWidth =1;
 
+
+
       }
-    //  if (array.length>1){
-    //    console.log("array length " + lineToMap.size);
-      //  console.log(array);
+      colorMap.clear();
+      bar.clear();
+     //if (array.length>1){
+       //console.log("array length " + lineToMap.size);
+      // console.log(array);
         // for (var i = 1; i < lineToMap.size; i++) {
         //
         //   if( lineToMap.has( (i).toString() ) && lineToMap.has( (i + 1).toString() ) ){
@@ -110,7 +120,31 @@ function draw (ctx, planets) {
         //     ctx.stroke();
         //   }
         // }
-      //}
+
+        for (var i = 0; i < lineToArray.length; i++) {
+          console.log("lineArray " + lineToArray.length);
+      //    if( lineToMap.has( (i).toString() ) && lineToMap.has( (i + 1).toString() ) ){
+            //console.log(lineToMap.get(i));
+
+
+            let planet1 = lineToArray[i];
+            let planet2 =  lineToArray[i+1];
+
+            if(typeof planet1 !== "undefined" && typeof planet2 !== "undefined"){
+              const {x1 , y1} = lineToArray[i].getPosition();
+              const {x2 , y2} = lineToArray[i+1].getPosition();
+              console.log("inside loop");
+              console.log('x2 ' + x2  + " y2 " + y2);
+              console.log('x1 ' + x1  + " y1 " + y1);
+
+              ctx.strokeStyle= COLOR;
+              ctx.beginPath();
+              ctx.moveTo(x1,y1);
+              ctx.lineTo(x2,y2);
+              ctx.stroke();
+          }
+       }
+  // }
 }
 
 module.exports = draw;
