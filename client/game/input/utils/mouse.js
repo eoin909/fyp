@@ -14,6 +14,7 @@ function Mouse (game1) {
 
   function click (event) {
         clicked=true;
+        console.log("x:" + getMousePos(event).x +" y: "+ getMousePos(event).y);
   }
 
     function unclick (event) {
@@ -45,7 +46,7 @@ function Mouse (game1) {
             const radius = planet.getRadius();
             //console.log("localPlayerId " + localPlayerId.shift());
             const id = localPlayerId.shift();
-            
+
             let mouse = getMousePos(event)
 
             if(Math.abs(x-mouse.x)<=radius){
@@ -63,7 +64,7 @@ function Mouse (game1) {
                   //planet.setSelectedBy()
                   planetSelected.set(planet.getId(), planet);
                   planetSelected.set("join", planet);
-                  planet.setSelectedBy(id);
+                  planet.setSelectedBy((planetSelected.size-1).toString());
 
                   console.log(planetSelected.size);
                   console.log("join");
@@ -77,7 +78,7 @@ function Mouse (game1) {
               }
                   planetSelected.set("target", planet);
                   console.log(planetSelected.size);
-                  planet.setSelectedBy(id);
+                  planet.setSelectedBy((planetSelected.size).toString());
                   console.log("target");
                 }
                 // console.log('mouseX = ' + event.clientX);

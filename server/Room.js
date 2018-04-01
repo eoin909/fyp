@@ -5,17 +5,17 @@ const Player = require('./ServerPlayer');
 const Virus = require('./ServerVirus');
 const debug = require('debug');
 const log = debug('game:server/Room');
-
+const CellMap = require('./CellMap.js');
 function Room ({ owner, game }) {
     const id = uuid.v4();
     const clients = new Set();
 
     var colors = new Map();
     colors.set( "red", '#FF0000');
-    colors.set( "blue",  '#0000ff');
+    colors.set( "Aqua",  '#00ffff');
     colors.set( "pink", '#ff00ff');
     colors.set( "green", '#33cc33');
-    colors.set( "Aqua",  '#00ffff');
+    colors.set( "Tan",  '#00ffff');
     colors.set( "yellow", '#FFFF00');
 
     var it = colors.values();
@@ -124,7 +124,9 @@ function Room ({ owner, game }) {
     }
 
     function startGame () {
-        game.addPlanets();
+
+        let map = CellMap.create({num:0});
+        game.addPlanets(map);
 
         for (const client of clients) {
           let color =  it.next().value;

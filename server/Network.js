@@ -24,8 +24,6 @@ function network () {
     }
 
     function receiveClientInput (client, input, inputTime, inputSeq) {
-        console.log("received data")
-        console.log(input);
         const planetSystem = clientPlanetSystem.get(client);
 
         planetSystem.pushInput({
