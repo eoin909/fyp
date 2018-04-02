@@ -22,7 +22,7 @@ function Network ({ game, socket, pingTimeout }) {
 
     function onPlayerLeft (playerId) {
         game.removePlayer(playerId);
-        console.log('player left with id', playerId);
+        //console.log('player left with id', playerId);
     }
 
     function onDisconnect () {

@@ -117,8 +117,10 @@ function Lobby ({ config }) {
                 if (room.getSize() === 0) {
                     endGame(room.getId());
                 }
-
+                console.log(JSON.stringify(room.toJSON()));
+                //room.emit('onLeftRoom', { room: room.toJSON() });
                 client.emit('onLeftRoom', { room: room.toJSON() });
+                room.emit('playerLeftRoom', { room: room.toJSON() });
             }
         });
 

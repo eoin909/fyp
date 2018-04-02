@@ -106,6 +106,8 @@ function Room ({ owner, game }) {
     }
 
     function leave (client) {
+      clients.delete(client);
+
         if (game.isStarted()) {
           //  const player = game.getNetwork().getPlayerByClient(client);
 
@@ -115,12 +117,11 @@ function Room ({ owner, game }) {
                 }
             }
 
-            game.removePlayer(client.getId());
+            game.removeVirus(client.getId());
             //game.getNetwork().removeClientPlayer(client);
             game.getNetwork().removeClientPlanetSystem(client);
         }
 
-        clients.delete(client);
     }
 
     function startGame () {
@@ -130,6 +131,7 @@ function Room ({ owner, game }) {
 
         for (const client of clients) {
           let color =  it.next().value;
+          client.setColor(color);
           const virus = Virus.create({
               id: client.getId(),
               name: client.getName(),

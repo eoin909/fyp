@@ -2,7 +2,16 @@
 
 const React = require('react');
 
+
 class RoomList extends React.Component {
+  getText (data){
+    if (data===null || typeof data === 'undefined'){
+      return "";
+    }
+    else {
+      return ("Color: " + data);
+    }
+  }
     render () {
         return (
             <div>
@@ -32,9 +41,12 @@ class RoomList extends React.Component {
                                             <span className="menu-item" key={ index } >
 
                                                 <span className = "css-truncate" >
-                                                { client.name}
+                                                //{ client.name}
+                                                {JSON.stringify(client)}
                                                 </span>
-
+                                                <span className = "css-truncate" >
+                                                {this.getText(client.color)}
+                                                </span>
                                                 <button className="btn btn-sm menu-btn" onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
                                                  {client.ready ? 'Ready ' : 'Ready Up'}
                                                 </button>

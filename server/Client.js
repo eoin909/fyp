@@ -6,6 +6,8 @@ function Client ({ socket, name }) {
     const id = uuid.v4();
     let currentRoom = null;
     let ready = false;
+    let color = null;
+
     function emit (event, data) {
         socket.emit(event, data);
     }
@@ -46,12 +48,21 @@ function Client ({ socket, name }) {
       ready=boo;
     }
 
+    function setColor(value) {
+      color=value;
+    }
+
+    function getColor() {
+      return color;
+    }
+
     function toJSON () {
         return {
             currentRoom: currentRoom ? currentRoom.toJSON() : null,
             id,
             name,
             ready,
+            color,
         };
     }
 
@@ -66,6 +77,8 @@ function Client ({ socket, name }) {
         setCurrentRoom,
         getReady,
         setReady,
+        getColor,
+        setColor,
         toJSON
     });
 }

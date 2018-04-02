@@ -72,18 +72,24 @@ class Lobby extends React.Component {
             });
 
             socket.on('onReadyClient', (data) => {
-              console.log(JSON.stringify(data.room.clients));
-              //console.log(JSON.stringify(this));
 
                 this.setState({
                   rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
                 });
             });
 
-            socket.on('onLeftRoom', () => {
-                this.setState({
-                    currentRoomId: null
-                });
+            socket.on('onLeftRoom', (data) => {
+
+              this.setState({
+                   currentRoomId: null
+              });
+            });
+
+            socket.on('playerLeftRoom', (data) => {
+
+              this.setState({
+                rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
+              });
             });
 
             socket.emit('register', {
@@ -109,7 +115,7 @@ class Lobby extends React.Component {
     }
 
     onReadyRoom (roomId) {
-      console.log("button pressed " + roomId);
+      //console.log("button pressed " + roomId);
         if (this.state.socket) {
             this.state.socket.emit('readyRoom', { roomId: roomId });
         }
