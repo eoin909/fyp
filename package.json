@@ -21,6 +21,7 @@
     "express": "^4.16.2",
     "node-uuid": "^1.4.8",
     "react": "^15.1.0",
+    "react-color": "^2.14.0",
     "react-dom": "^15.1.0",
     "socket.io": "^1.7.4",
     "socket.io-client": "^1.4.6"

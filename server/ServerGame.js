@@ -40,15 +40,12 @@ function ServerGame ({ options }) {
     }
 
     function start () {
-        console.log("game start");
         networkLoop.start();
-
         game.start();
     }
 
     function stop () {
         networkLoop.stop();
-
         game.stop();
     }
 
@@ -59,6 +56,7 @@ function ServerGame ({ options }) {
         //   console.log("update server game");
         //     player.update(delta);
         // }
+        game.updateAI(delta);
         game.planetSystemUpdate(delta);
     }
 

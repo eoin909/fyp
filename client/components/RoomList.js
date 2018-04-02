@@ -4,14 +4,34 @@ const React = require('react');
 
 
 class RoomList extends React.Component {
-  getText (data){
-    if (data===null || typeof data === 'undefined'){
-      return "";
-    }
-    else {
-      return ("Color: " + data);
-    }
+
+  getButton (data){
+    if(data.ready ===false){
+    return (
+      <button className="btn btn-sm btn-danger menu-btn"
+        onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
+        Ready Up
+      </button>
+    );
   }
+  else if (data.ready === true && data.color === null) {
+    return (
+      <button
+          className="btn btn-sm btn-primary menu-btn">
+        Ready
+      </button>
+    );
+  }
+  else {
+    return (
+      <button
+        className="circle menu-btn"
+        style={{backgroundColor: data.color}}  >
+      </button>
+    );
+  }
+}
+
     render () {
         return (
             <div>
@@ -29,7 +49,7 @@ class RoomList extends React.Component {
                             Room id: { this.props.currentRoomId }
                         </span>
                         <span className="menu-item" >
-                            { this.props.rooms.map((room, index) => {
+                            { this.props.rooms.filter(room => room.id === this.props.currentRoomId).map((room, index) => {
                                 return (
 
                                     <span className="menu-item" key={ index } >
@@ -41,16 +61,10 @@ class RoomList extends React.Component {
                                             <span className="menu-item" key={ index } >
 
                                                 <span className = "css-truncate" >
-                                                //{ client.name}
-                                                {JSON.stringify(client)}
+                                                
+                                                { client.name}
                                                 </span>
-                                                <span className = "css-truncate" >
-                                                {this.getText(client.color)}
-                                                </span>
-                                                <button className="btn btn-sm menu-btn" onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
-                                                 {client.ready ? 'Ready ' : 'Ready Up'}
-                                                </button>
-
+                                                {this.getButton(client)}
                                             </span>
                                             );
                                         }) }
@@ -78,14 +92,16 @@ class RoomList extends React.Component {
                                             <span
                                                 className="css-truncate"
                                             >
-                                                { room.id }
+                                                Room id: { room.id }
                                             </span>
+                                            {!room.isGameStarted ? (
                                             <button
                                                 className="btn btn-sm menu-btn"
                                                 onClick={ this.props.onRoomClick.bind(this, room) }
                                             >
                                                 Join
                                             </button>
+                                          ) : (null)}
                                         </span>
                                     );
                                 }) }

@@ -7,6 +7,7 @@ function Client ({ socket, name }) {
     let currentRoom = null;
     let ready = false;
     let color = null;
+    let ai = false;
 
     function emit (event, data) {
         socket.emit(event, data);
@@ -52,6 +53,15 @@ function Client ({ socket, name }) {
       color=value;
     }
 
+    function isAI() {
+      return ai;
+
+    }
+
+    function setAI(value) {
+      ai=value;
+    }
+    
     function getColor() {
       return color;
     }
@@ -61,8 +71,7 @@ function Client ({ socket, name }) {
             currentRoom: currentRoom ? currentRoom.toJSON() : null,
             id,
             name,
-            ready,
-            color,
+            ready
         };
     }
 
@@ -77,6 +86,8 @@ function Client ({ socket, name }) {
         setCurrentRoom,
         getReady,
         setReady,
+        isAI,
+        setAI,
         getColor,
         setColor,
         toJSON

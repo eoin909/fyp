@@ -48,7 +48,8 @@ class Lobby extends React.Component {
                     user: data.user,
                     socket: socket,
                     rooms: data.rooms,
-                    gameClient: gameClient
+                    gameClient: gameClient,
+                    bgColor: 'red'
                 });
             });
 
@@ -74,8 +75,13 @@ class Lobby extends React.Component {
             socket.on('onReadyClient', (data) => {
 
                 this.setState({
-                  rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
+                  rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
                 });
+                // this.setState({
+                //
+                // });
+                // bgColor: 'green'
+
             });
 
             socket.on('onLeftRoom', (data) => {
@@ -116,6 +122,9 @@ class Lobby extends React.Component {
 
     onReadyRoom (roomId) {
       //console.log("button pressed " + roomId);
+      this.setState({
+        bgColor: 'green'
+      });
         if (this.state.socket) {
             this.state.socket.emit('readyRoom', { roomId: roomId });
         }
@@ -125,6 +134,9 @@ class Lobby extends React.Component {
         if (this.state.socket) {
             this.state.socket.emit('createRoom');
         }
+        this.setState({
+          bgColor: 'red'
+        });
     }
 
     onLogout () {

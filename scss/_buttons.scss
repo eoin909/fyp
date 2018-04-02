@@ -82,6 +82,33 @@
   }
 }
 
+.btn-virus {
+  position: relative;
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 20px;
+  color: $text-white;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-image: none;
+  border: 1px solid #000000;
+  border-radius: 3px;
+  -webkit-appearance: none;
+
+}
+
+.circle {
+  width: 20px;
+  height: 20px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
 // Green primary button
 .btn-primary {
   color: $text-white;

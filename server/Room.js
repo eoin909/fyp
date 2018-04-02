@@ -6,6 +6,7 @@ const Virus = require('./ServerVirus');
 const debug = require('debug');
 const log = debug('game:server/Room');
 const CellMap = require('./CellMap.js');
+const AI = require('./ServerAI');
 function Room ({ owner, game }) {
     const id = uuid.v4();
     const clients = new Set();
@@ -19,7 +20,8 @@ function Room ({ owner, game }) {
     colors.set( "yellow", '#FFFF00');
 
     var it = colors.values();
-    //colors.set( "", '#FF0000', '#FFFF00', '#0000ff', '#ff00ff', '#33cc33', '#00ffff']);
+
+    let names = ["Damian", "Gary", "Jason", "Luke", "Michael", "Conor", "Lisa", "Laura", "Edel", "Jane", ] ;
 
     function getId () {
         return id;
@@ -50,34 +52,22 @@ function Room ({ owner, game }) {
 
     function send (message) {
         for (const client of clients) {
-            client.send(message);
+            if (!client.isAI()){
+              client.send(message);
+            }
         }
     }
 
     function emit (event, data) {
         for (const client of clients) {
+          if (!client.isAI()){
             client.emit(event, data);
+          }
         }
     }
 
-  //  function receiveClientInput (client, input, inputTime, inputSeq) {
-
     function receiveClientInput (...args) {
         game.getNetwork().receiveClientInput(...args);
-      //game.receiveInput
-      // console.log("data received");
-      // game.pushInput({
-      //     inputs: input,
-      //     time: inputTime,
-      //     seq: inputSeq
-      // });
-      // game.pushInput({
-      //     client: client,
-      //     inputs: input,
-      //     time: inputTime,
-      //     seq: inputSeq
-      // });
-
     }
 
     function join (client) {
@@ -87,18 +77,12 @@ function Room ({ owner, game }) {
 
             const virus = Virus.create({
                 id: client.getId(),
-                name: client.getName()
+                name: client.getName(),
+                virusID: 1
             });
-            //
-            // game.addVirus(virus);
-            // game.getNetwork().addClientPlanetSystem(client, game.getPlanetSystem());
-            //
-            // log('joining game');
-
-          //  client.emit('startGame', game.getStateForPlanet(planet));
 
             for (const roomClient of clients) {
-                if (roomClient !== client) {
+                if (roomClient !== client && !roomClient.isAI) {
                     roomClient.emit('playerJoined', virus.toJSON());
                 }
             }
@@ -112,7 +96,7 @@ function Room ({ owner, game }) {
           //  const player = game.getNetwork().getPlayerByClient(client);
 
             for (const roomClient of clients) {
-                if (roomClient !== client) {
+                if (roomClient !== client && !roomClient.isAI) {
                     roomClient.emit('playerLeft', client.getId());
                 }
             }
@@ -124,7 +108,7 @@ function Room ({ owner, game }) {
 
     }
 
-    function startGame () {
+    function startGame (room) {
 
         let map = CellMap.create({num:0});
         game.addPlanets(map);
@@ -135,21 +119,30 @@ function Room ({ owner, game }) {
           const virus = Virus.create({
               id: client.getId(),
               name: client.getName(),
-              color
+              color,
+              virusID: 1
           });
 
-            //game.addPlanets(map);
-
-            game.addVirus(virus)
+            game.addVirus(virus);
             game.getNetwork().addClientPlanetSystem(client, game.getPlanetSystem());
 
             //game.getNetwork().addClientPlanet(client, virus);
         }
 
+        let color =  it.next().value;
+        //client.setColor(color);
+          let serverVirus = getAIClient(color);
+
+          //game.addPlanets(map);
+          game.addServerVirus(serverVirus);
+
         for (const client of clients) {
             //const virus = game.getNetwork().getVirusByClient(client);
             //console.log("print out client id " + client.getId());
-            client.emit('startGame', game.getStateForPlanetSystem(client.getId()));
+            if(!client.isAI()){
+              client.emit('onReadyClient', { room: room.toJSON() });
+              client.emit('startGame', game.getStateForPlanetSystem(client.getId()));
+            }
         }
 
         log('game started');
@@ -165,31 +158,55 @@ function Room ({ owner, game }) {
         clients.clear();
     }
 
+    function getName() {
+      let namepicked = false;
+      let name = null;
+      while(!namepicked){
+       let x = Math.floor((Math.random() * names.length));
+       name = names[x];
+       console.log("name Ai " + name);
+
+      for (const client of clients) {
+          if (name === client.getName()) {
+              namepicked=false;
+              break;
+          }
+          namepicked = true;
+        }
+      }
+      return name;
+    }
+
     function toJSON () {
         return {
             id,
+            isGameStarted: game.isStarted(),
             clients: Array.from(clients).map(client => {
                 return {
                     id: client.getId(),
                     name: client.getName(),
-                    ready: client.getReady()
+                    ready: client.getReady(),
+                    color: client.getColor()
                 };
             })
         };
     }
+  function getAIClient (color) {
+    let client = AI.create({
+        name: getName(),
+    });
+    client.setColor(color);
+    clients.add(client);
 
-    function makeIterator(array) {
-        var nextIndex = 0;
+    const virus = Virus.create({
+        id: client.getId(),
+        name: client.getName(),
+        color,
+        virusID: 0
+    });
 
-        return {
-           next: function() {
-               return nextIndex < array.length ?
-                   {value: array[nextIndex++], done: false} :
-                   {done: true};
-           }
-        };
-    }
-
+    return virus;
+  }
     join(owner);
 
     return Object.freeze({

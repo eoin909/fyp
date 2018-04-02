@@ -11,7 +11,7 @@ function Lobby ({ config }) {
     const clients = new Map();
 
     function startGame (room) {
-        room.startGame();
+        room.startGame(room);
     }
 
     function createGame (client) {
@@ -117,10 +117,14 @@ function Lobby ({ config }) {
                 if (room.getSize() === 0) {
                     endGame(room.getId());
                 }
-                console.log(JSON.stringify(room.toJSON()));
-                //room.emit('onLeftRoom', { room: room.toJSON() });
+
                 client.emit('onLeftRoom', { room: room.toJSON() });
                 room.emit('playerLeftRoom', { room: room.toJSON() });
+
+                if(room.isGameStarted() && room.getSize() === 1){
+                  //endGame(room.getId());
+                  //client.emit('onLeftRoom', { room: room.toJSON() });
+                }
             }
         });
 
