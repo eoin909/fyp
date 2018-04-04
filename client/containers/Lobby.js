@@ -14,7 +14,7 @@ class Lobby extends React.Component {
         super(props);
 
         this.state = {
-            socket: null,
+            // socket: null,
             user: null,
             rooms: [],
             currentRoomId: null,
@@ -26,11 +26,13 @@ class Lobby extends React.Component {
         const socket = new SocketClient(this.props.serverUrl);
 
         socket.on('connect_error', () => {
+            console.log("server error");
             this.props.onLobbyError('Error connecting to server.');
             socket.close();
         });
 
         socket.on('connect', () => {
+          console.log("connect");
             socket.on('onConnected', (data) => {
                 const gameClient = ClientGame.create({
                     options: this.props.gameSettings
@@ -121,22 +123,18 @@ class Lobby extends React.Component {
     }
 
     onReadyRoom (roomId) {
-      //console.log("button pressed " + roomId);
-      this.setState({
-        bgColor: 'green'
-      });
         if (this.state.socket) {
             this.state.socket.emit('readyRoom', { roomId: roomId });
         }
     }
 
     onCreateRoom () {
+    //  console.log("create room");
+      console.log(this.state.socket);
         if (this.state.socket) {
+          console.log("if loop");
             this.state.socket.emit('createRoom');
         }
-        this.setState({
-          bgColor: 'red'
-        });
     }
 
     onLogout () {

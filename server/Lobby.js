@@ -9,9 +9,11 @@ const log = debug('game:server/server');
 function Lobby ({ config }) {
     const rooms = new Map();
     const clients = new Map();
+    const dataBase = new Map();
 
     function startGame (room) {
-        room.startGame(room);
+        let rankedArray = rankDB();
+        room.startGame(room, rankedArray);
     }
 
     function createGame (client) {
@@ -68,6 +70,7 @@ function Lobby ({ config }) {
         });
 
         client.on('joinRoom', (data) => {
+          rankDB();
             const room = rooms.get(data.roomId);
 
             // console.log("is game started ", room.isGameStarted());
@@ -183,9 +186,29 @@ function Lobby ({ config }) {
         clients.delete(clientId);
     }
 
+    function rankDB() {
+      var db = [];
+      for (const record of dataBase.values()) {
+        db.push(record);
+      }
+        db.sort(function(a, b) {
+          return b.highscore -  a.highscore;
+        });
+
+        return db;
+      //   console.log(db);
+      // console.log(findUserRank("gary123" , db) + " out of " + db.length) ;
+    }
+    function updateDataBase (doc) {
+      dataBase.set(doc.username, doc);
+      console.log("lobby.js");
+    }
+
     return {
         addClient,
-        removeClient
+        removeClient,
+        updateDataBase,
+        rankDB
     };
 }
 

@@ -8,6 +8,7 @@ function Client ({ socket, name }) {
     let ready = false;
     let color = null;
     let ai = false;
+    let winner = false;
 
     function emit (event, data) {
         socket.emit(event, data);
@@ -61,9 +62,17 @@ function Client ({ socket, name }) {
     function setAI(value) {
       ai=value;
     }
-    
+
     function getColor() {
       return color;
+    }
+
+    function setWinner() {
+      winner = true;
+    }
+
+    function getWinner() {
+      return winner;
     }
 
     function toJSON () {
@@ -90,6 +99,8 @@ function Client ({ socket, name }) {
         setAI,
         getColor,
         setColor,
+        setWinner,
+        getWinner,
         toJSON
     });
 }

@@ -59,6 +59,9 @@ function draw (ctx, planets) {
           }
         }
 
+
+
+
         if (planet.getSelectedBy()!==null){
           ctx.beginPath();
           ctx.strokeStyle= COLOR;
@@ -72,7 +75,7 @@ function draw (ctx, planets) {
           //
           // console.log("lineToArray.length " + lineToArray.length);
           let key = planet.getSelectedBy();
-          if(key ==='target' || key === 'join'){
+          if(key ==='target'){
             lineToMap.set(key, planet);
           }
           else{
@@ -105,6 +108,9 @@ function draw (ctx, planets) {
       }
       colorMap.clear();
       bar.clear();
+
+
+
      //if (array.length>1){
        //console.log("array length " + lineToMap.size);
       // console.log(array);
@@ -161,9 +167,10 @@ function draw (ctx, planets) {
 
       if (lineToMap.has('target')){
         target = lineToMap.get('target');
-      }else {
-        target = lineToMap.get('join');
       }
+      // else {
+      //   target = lineToMap.get('join');
+      // }
 
 if(target !== null && typeof target !== 'undefined'){
   const x1 = target.getX();
@@ -174,8 +181,8 @@ if(target !== null && typeof target !== 'undefined'){
     //    if( lineToMap.has( (i).toString() ) && lineToMap.has( (i + 1).toString() ) ){
           //console.log(lineToMap.get(i));
           let planet1 = lineToMap.get(mapKeys);
-planet1.getId();
-target.getId();
+            // planet1.getId();
+            // target.getId();
 
           if (planet1.getId() !== target.getId() ){
 
@@ -183,8 +190,8 @@ target.getId();
             //let planet2 =  lineToArray[i+1];
 
             //if(typeof planet1 !== "undefined" && typeof planet2 !== "undefined"){
-            const x2 = planet1.getX();
-            const y2 = planet1.getY();
+              const x2 = planet1.getX();
+              const y2 = planet1.getY();
               let angle1 = calAngle( x1 , y1, x2 , y2);
               let angle2 = calAngle( x2 , y2, x1 , y1,);
               let newPositonsTarget = getNewPositions(r1, angle1);

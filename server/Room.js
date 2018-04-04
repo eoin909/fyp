@@ -7,6 +7,10 @@ const debug = require('debug');
 const log = debug('game:server/Room');
 const CellMap = require('./CellMap.js');
 const AI = require('./ServerAI');
+const User = require('./Models/User.js');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+
 function Room ({ owner, game }) {
     const id = uuid.v4();
     const clients = new Set();
@@ -19,6 +23,7 @@ function Room ({ owner, game }) {
     colors.set( "Tan",  '#00ffff');
     colors.set( "yellow", '#FFFF00');
 
+    let db = null;
     var it = colors.values();
 
     let names = ["Damian", "Gary", "Jason", "Luke", "Michael", "Conor", "Lisa", "Laura", "Edel", "Jane", ] ;
@@ -108,8 +113,8 @@ function Room ({ owner, game }) {
 
     }
 
-    function startGame (room) {
-
+    function startGame (room, dbArray) {
+        db = dbArray;
         let map = CellMap.create({num:0});
         game.addPlanets(map);
 
@@ -147,15 +152,65 @@ function Room ({ owner, game }) {
 
         log('game started');
 
-        game.start();
+        game.startServerGame(room);
     }
 
     function endGame () {
         if (game) {
+          //  let winnerId = game.getWinner();
+
             game.stop();
         }
 
         clients.clear();
+    }
+
+    function winner(id) {
+      let winnerRank = null;
+      let winner = null;
+      for (const client of clients.values()) {
+        if(client.getId() === id){
+          client.setWinner();
+          winner = client.getName();
+          winnerRank = findUserRank(winner);
+        }
+      }
+
+      let winnerScore = 0;
+      for (const client of clients.values()) {
+        if(client.getId() !== id && !client.isAI()){
+            //client.setWinner();
+            //console.log(client.getName());
+        let rank = findUserRank(client.getName());
+
+        winnerScore += Math.floor(Math.sqrt(rank)*db.length*10);
+
+        let score = -Math.floor(Math.sqrt(winnerRank)*db.length);
+            // var user = new User({
+            //     username: client.getName(),
+            //     highscore: score
+            // });
+        User.updateHighScore(
+                              new User({
+                                username: client.getName(),
+                                highscore: score
+                              })
+                            );
+        } else if (client.isAI()) {
+            winnerScore += 200;
+          }
+      }
+
+      winnerScore = Math.floor(winnerScore/Math.sqrt(winnerRank))
+      User.updateHighScore(
+                            new User({
+                              username: winner,
+                              highscore: winnerScore
+                            })
+                          );
+      console.log("cal over with");
+      endGame();
+      ///update leaderBoard
     }
 
     function getName() {
@@ -187,10 +242,22 @@ function Room ({ owner, game }) {
                     name: client.getName(),
                     ready: client.getReady(),
                     color: client.getColor()
+                    //,winner: client.getWinner()
                 };
             })
         };
     }
+
+    function findUserRank (name) {
+
+      for (var i = 0; i < db.length; i++) {
+        if(db[i].username === name){
+          return (i+1);
+        }
+      }
+      return -1;
+    }
+
   function getAIClient (color) {
     let client = AI.create({
         name: getName(),
@@ -221,6 +288,7 @@ function Room ({ owner, game }) {
         join,
         leave,
         startGame,
+        winner,
         endGame,
         toJSON
     });

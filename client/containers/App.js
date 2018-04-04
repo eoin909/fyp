@@ -6,7 +6,7 @@ const Settings = require('../components/Settings');
 const Help = require('../components/Help');
 const Lobby = require('./Lobby');
 const debugMode = require('../debug').debugMode;
-
+const SocketClient = require('socket.io-client');
 const clientConfig = require('./../client-config');
 const gameConfig = require('../../lib/game-config');
 
@@ -35,14 +35,96 @@ class App extends React.Component {
         }
     }
 
+
+  componentWillMount () {
+
+
+    const socket = new SocketClient('http://localhost:4004');
+
+    this.state = {
+        socket: socket
+    };
+
+    // socket.emit('logIn', {
+    //     name: values.name,
+    //     password:values.password
+    // });
+
+      socket.on('connect', () => {
+
+
+    socket.on("there to fuck", (data) => {
+      console.log("fuck you ya nosey bastard");
+    });
+
+    socket.on("LogIn", (data) => {
+      console.log("LogIn");
+      this.setState({
+          loggedIn: true,
+          serverUrl: data.server,
+          name: data.name,
+          password: data.password,
+          lobbyError: null,
+          gameSettings: Object.assign({}, gameConfig, clientConfig)
+      });
+      socket.close();
+      // socket.emit('register', {
+      //     name: data.name
+      // });
+    });
+
+    socket.on("failedLogIn", (data) => {
+      console.log("failure");
+      this.setState({
+          loggedIn: false,
+          serverUrl: data.server,
+          name: data.name,
+          password: '',
+          lobbyError: null,
+          logInFailure:true
+      });
+    });
+
+
+
+    });
+
+  }
+
+
+
+
     onLogin (values) {
-        this.setState({
-            loggedIn: true,
-            serverUrl: values.server,
-            name: values.name,
-            password: values.password,
-            lobbyError: null,
-        });
+
+
+    //  const socket = new SocketClient('http://localhost:4004');
+
+      this.state.socket.emit('logIn', {
+          name: values.name,
+          password:values.password,
+          server: values.server
+      });
+    //     socket.on('connect', () => {
+    //   socket.on("there to fuck", (data) => {
+    //     console.log("fuck you ya nosey bastard");
+    //   });
+    // });
+
+        // this.setState({
+        //     loggedIn: true,
+        //     serverUrl: values.server,
+        //     name: values.name,
+        //     password: values.password,
+        //     lobbyError: null,
+        // });
+    }
+
+    onRegister (values) {
+      this.state.socket.emit('registerPlayer', {
+          name: values.name,
+          password:values.password,
+          server: values.server
+      });
     }
 
     onLobbyError (error) {

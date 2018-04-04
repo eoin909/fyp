@@ -41,7 +41,12 @@ function ServerGame ({ options }) {
 
     function start () {
         networkLoop.start();
-        game.start();
+        game.startServerGame();
+    }
+
+    function startServerGame (room) {
+        networkLoop.start();
+        game.startServerGame(room);
     }
 
     function stop () {
@@ -56,6 +61,15 @@ function ServerGame ({ options }) {
         //   console.log("update server game");
         //     player.update(delta);
         // }
+        game.isGameOver();
+        //
+        // if(playersAlive.size < 2 ){
+        //   console.log("game over");
+        //   for (const player of playersAlive.values()) {
+        //     console.log("winner " + player.getControlledBy());
+        //   }
+        //   stop();
+        // }
         game.updateAI(delta);
         game.planetSystemUpdate(delta);
     }
@@ -66,6 +80,7 @@ function ServerGame ({ options }) {
         addPlayer,
         getNetwork,
         start,
+        startServerGame,
         stop
     }));
 }
