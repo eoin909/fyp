@@ -2,6 +2,7 @@
 
 const React = require('react');
 const Login = require('../components/Login');
+const Register = require('../components/Register');
 const Settings = require('../components/Settings');
 const Help = require('../components/Help');
 const Lobby = require('./Lobby');
@@ -45,11 +46,6 @@ class App extends React.Component {
         socket: socket
     };
 
-    // socket.emit('logIn', {
-    //     name: values.name,
-    //     password:values.password
-    // });
-
       socket.on('connect', () => {
 
 
@@ -68,9 +64,6 @@ class App extends React.Component {
           gameSettings: Object.assign({}, gameConfig, clientConfig)
       });
       socket.close();
-      // socket.emit('register', {
-      //     name: data.name
-      // });
     });
 
     socket.on("failedLogIn", (data) => {
@@ -85,45 +78,48 @@ class App extends React.Component {
       });
     });
 
-
-
+    socket.on("failedRegister", (data) => {
+      console.log("failure");
+      this.setState({
+          loggedIn: false,
+          serverUrl: '',
+          name: '',
+          password: '',
+          lobbyError: null,
+          logInRegister: true
+      });
     });
 
+    socket.on("RegisterSucess", (data) => {
+      console.log("LogIn");
+      this.setState({
+          loggedIn: false,
+          serverUrl: '',
+          name: data.name,
+          password: '',
+          lobbyError: null,
+          gameSettings: Object.assign({}, gameConfig, clientConfig),
+          register: false
+      });
+    });
+    });
   }
 
-
-
-
     onLogin (values) {
-
-
-    //  const socket = new SocketClient('http://localhost:4004');
 
       this.state.socket.emit('logIn', {
           name: values.name,
           password:values.password,
           server: values.server
       });
-    //     socket.on('connect', () => {
-    //   socket.on("there to fuck", (data) => {
-    //     console.log("fuck you ya nosey bastard");
-    //   });
-    // });
 
-        // this.setState({
-        //     loggedIn: true,
-        //     serverUrl: values.server,
-        //     name: values.name,
-        //     password: values.password,
-        //     lobbyError: null,
-        // });
     }
 
-    onRegister (values) {
+    registerUser (values) {
       this.state.socket.emit('registerPlayer', {
           name: values.name,
           password:values.password,
-          server: values.server
+          email: values.email
       });
     }
 
@@ -152,6 +148,13 @@ class App extends React.Component {
                 selectedTab: tab
             });
         };
+    }
+
+    changePage (){
+      console.log("click do");
+      this.setState({
+          register: !this.state.register
+      });
     }
 
     render () {
@@ -186,12 +189,23 @@ class App extends React.Component {
                             onLobbyError={ this.onLobbyError.bind(this) }
                         />
                     ) : (
+
+                      this.state.register ? (
+                        <Register
+                            registerUser={ this.registerUser.bind(this) }
+                            changePage= { this.changePage.bind(this) }
+                        />
+                      ) : (
+
                         <Login
                             submitHandler={ this.onLogin.bind(this) }
+                            changePage= { this.changePage.bind(this) }
                         />
+
+                      )
                     )
                 }
-
+                {this.state.loggedIn ? (
                 <div className="columns">
                     <div className="single-column">
                         <div className="tabnav mb-0 border-bottom-0">
@@ -213,6 +227,9 @@ class App extends React.Component {
                         { tab }
                     </div>
                 </div>
+              ) : (
+                null
+              )}
             </div>
         );
     }

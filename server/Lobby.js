@@ -5,6 +5,9 @@ const Room = require('./Room');
 
 const debug = require('debug');
 const log = debug('game:server/server');
+const User = require('./Models/User.js');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/LeaderBoard');
 
 function Lobby ({ config }) {
     const rooms = new Map();
@@ -87,6 +90,38 @@ function Lobby ({ config }) {
             }
         });
 
+        client.on('displayLeaderBoard', (data) => {
+            User.find()
+                .then(function(doc) {
+                  for (var i = 0; i < doc.length; i++) {
+                    updateDataBase(doc[i]);
+                  }
+                  console.log("here");
+                  let dataRecorsArray = rankDB();
+                  console.log("size " + dataRecorsArray.length);
+                  let recordData =  {
+                          columns: ['Rank', 'UserName', 'highscore'],
+                          records: dataRecorsArray.map(record => {
+                          return {
+                              username: record.username,
+                              highscore: record.highscore ,
+                              rank: findUserRank(record.username, dataRecorsArray)
+                              //,winner: client.getWinner()
+                          };
+                      })
+                  };
+
+                   client.emit('leaderBoard', recordData );
+                }).catch(err => { // if error we will be here
+                    console.error('App starting error:', err.stack);
+                    process.exit(1);
+                });
+
+            //rankDB();
+
+
+        });
+
         client.on('readyRoom', (data) => {
             const room = rooms.get(data.roomId);
 
@@ -102,9 +137,15 @@ function Lobby ({ config }) {
                 if( room.getSize()>1){
                   //console.log("everyone ready " + room.checkReady());
                   if (room.checkReady()){
+                    User.find()
+                        .then(function(doc) {
+                          for (var i = 0; i < doc.length; i++) {
+                            updateDataBase(doc[i]);
+                          }
+                        });
+
                     startGame(room);
                   };
-                  //start game
                 }
                 log('client joined room');
             }
@@ -187,21 +228,32 @@ function Lobby ({ config }) {
     }
 
     function rankDB() {
+      console.log("rank");
+      console.log(dataBase.size);
       var db = [];
       for (const record of dataBase.values()) {
         db.push(record);
       }
-        db.sort(function(a, b) {
-          return b.highscore -  a.highscore;
-        });
-
-        return db;
+      db.sort(function(a, b) {
+        return b.highscore -  a.highscore;
+      });
+      console.log("return");
+      return db;
       //   console.log(db);
       // console.log(findUserRank("gary123" , db) + " out of " + db.length) ;
     }
     function updateDataBase (doc) {
       dataBase.set(doc.username, doc);
-      console.log("lobby.js");
+    }
+
+    function findUserRank (name,db) {
+
+      for (var i = 0; i < db.length; i++) {
+        if(db[i].username === name){
+          return (i+1);
+        }
+      }
+      return -1;
     }
 
     return {

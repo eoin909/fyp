@@ -18,7 +18,7 @@ label {
 .form-control,
 .form-select {
   min-height: 34px;
-  padding: 7px 8px;
+  padding: 14px 16px;
   font-size: 13px;
   color: $text-gray-dark;
   vertical-align: middle;
@@ -53,8 +53,8 @@ label {
 // Mini inputs, to match .minibutton
 .input-sm {
   min-height: 26px;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   font-size: 12px;
 }
 
@@ -164,11 +164,21 @@ input::-webkit-inner-spin-button {
   @include clearfix;
 
   .btn {
-    float: right;
+    text-transform: uppercase;
+    outline: 0;
+    background: #4CAF50;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer;
 
-    + .btn {
-      margin-right: 5px;
-    }
+    // + .btn {
+    //   margin-right: 5px;
+    // }
   }
 }
 
@@ -187,4 +197,23 @@ input::-webkit-inner-spin-button {
   }
 
   a { font-weight: bold; }
+}
+
+
+// @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+//
+.login-page {
+  width: 360px;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.form {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }

@@ -5,16 +5,15 @@ const collisionSystem = require('../../../../lib/CollisionSystem1');
 const localPlayerId = [];
 const planetSelected = new Map();
 
-function Mouse (game1) {
+function Mouse (game) {
 
-  const game = game1;
   const canvas =  null;
   let inputs = [];
   const planetSelected = new Map();
+  let localPlayer = null;
 
   function click (event) {
         clicked=true;
-        //console.log("x:" + getMousePos(event).x +" y: "+ getMousePos(event).y);
   }
 
     function unclick (event) {
@@ -31,100 +30,49 @@ function Mouse (game1) {
     }
 
     function moveFunction (event) {
-        //onKeyChange(event, false);
-        //console.log("move");
-        if(clicked){
-            //collisionSystem.check();
-            // game.getPlanets();
-          var planets =  game.getPlanets();
-        //  console.log("planets " + planets.length);
 
-          for (const planet of planets) {
-            const { x, y } = planet.getPosition();
-            // console.log("planet x : " + x + "planet y : " + y);
-            // const radius = planet.getRadius();
-            const radius = planet.getRenderingRadius();
-            //console.log("localPlayerId " + localPlayerId.shift());
-            const id = localPlayerId.shift();
+      if(clicked){
+        var planets =  game.getPlanets();
 
-            let mouse = getMousePos(event)
+        for (const planet of planets) {
+          const { x, y } = planet.getPosition();
+          const radius = planet.getRenderingRadius();
+          const id = localPlayer;
 
-            if(Math.abs(x-mouse.x)<=radius){
-              if(Math.abs(y-(mouse.y))<=radius){
+          let mouse = getMousePos(event)
 
-
-                if(planetSelected.has('target')){
-                  if(planetSelected.get('target').getControlledBy() === id){
-                    planetSelected.get("target").setSelectedBy('draw');
-                  }else {
-                    planetSelected.get("target").setSelectedBy(null);
-                  }
+          if (Math.abs( x - mouse.x ) <= radius){
+            if (Math.abs( y - ( mouse.y )) <= radius){
+              if ( planetSelected.has('target') ){
+                if (planetSelected.get('target').getControlledBy() === id){
+                  planetSelected.get("target").setSelectedBy('draw');
+                } else {
+                  planetSelected.get("target").setSelectedBy(null);
                 }
+              }
 
-                // console.log("planet x : " + x + "planet y : " + y);
-              //  console.log("planet.getControlledBy  " + planet.getControlledBy());
-                //console.log("localPlayerId " + localPlayerId.shift());
-              //  console.log("localPlayerId " + id);
-                if(planet.getControlledBy()===id){
-                  // console.log("planet.getControlledBy  " + planet.getControlledBy);
-                  // console.log("localPlayerId " + localPlayerId);
-              //    console.log("my planet");
-                  //planet.setSelectedBy()
-                  planetSelected.set(planet.getId(), planet);
-
-                  // if(planetSelected.has('target')){
-                  //   if(planetSelected.get('target').getControlledBy() === id){
-                  //     planetSelected.get("target").setSelectedBy('draw');
-                  //   }else {
-                  //     planetSelected.get("target").setSelectedBy(null);
-                  //   }
-
-                  planetSelected.set("target", planet);
-                  planet.setSelectedBy('target');
-                //  counter++;
-              //    console.log(planetSelected.size);
-                //  console.log("counter " + counter);
-                //  planet.setSelectedBy(id);
-                }
-                else {
-                      // if(planetSelected.has('target')){
-                      //   if (planetSelected.has('join')){
-                      //     planetSelected.get("join").setSelectedBy('draw');
-                      //     planetSelected.delete("join");
-                      //   }
-                      //   let fuckyou =  planetSelected.get("target");
-                      //   fuckyou.setSelectedBy(null);
-                      // //  counter--;
-                      // }
-
-                      planetSelected.set("target", planet);
-                  //    console.log(planetSelected.size);
-                      planet.setSelectedBy("target");
-                    //  counter++
-                    //  console.log("counter " + counter);
-
-                  //    console.log("target");
-                    }
-                // console.log('mouseX = ' + event.clientX);
-                // console.log('mouseY = ' + event.clientY);
-              //   console.log("_______HIT _________");
+              if (planet.getControlledBy() === id){
+                planetSelected.set(planet.getId(), planet);
+                planetSelected.set("target", planet);
+                planet.setSelectedBy('target');
+              } else {
+                planetSelected.set("target", planet);
+                planet.setSelectedBy("target");
               }
             }
-            // console.log('mouseX = ' + event.clientX);
-            // console.log('mouseY = ' + event.clientY);
           }
         }
+      }
     }
+
     function processInputs(input) {
       let data = '';
-        data += "begin,"
+      data += "begin,"
 
-        input.forEach(function (item, key, mapObj) {
-                data += key + "_" + item.getId() + "," ;
-                 })
+      input.forEach(function (item, key, mapObj) {
+                data += key + "_" + item.getId() + "," ; })
 
-        data += "end,"
-
+      data += "end,"
       inputs.push(data);
     }
 
@@ -144,9 +92,7 @@ function Mouse (game1) {
     }
 
     function setLocalPlayer(id) {
-      // let localPlayerId[0] = id;
-      localPlayerId.push(id);
-    //  console.log("set id " + localPlayerId);
+      localPlayer = id;
     }
     function stopListening () {
       document.addEventListener('mousedown', click, false);

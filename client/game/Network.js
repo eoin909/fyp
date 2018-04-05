@@ -16,13 +16,11 @@ function Network ({ game, socket, pingTimeout }) {
             y: playerData.y,
             cellCount: playerData.cellCount
         });
-//{"id":0,"x":60,"y":245,"controlledBy":"neutral","radius":20,"cellCount":50}
         game.addPlanet(planet);
     }
 
     function onPlayerLeft (playerId) {
         game.removePlayer(playerId);
-        //console.log('player left with id', playerId);
     }
 
     function onDisconnect () {

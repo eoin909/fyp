@@ -9,7 +9,8 @@ class Login extends React.Component {
         this.state = {
             server: 'http://localhost:4004',
             name: 'jason',
-            password: 'password'
+            password: 'password',
+            register: false
         };
     }
 
@@ -19,15 +20,17 @@ class Login extends React.Component {
         });
     }
 
+    changePage () {
+      console.log("click");
+    }
+
     render () {
         return (
-            <div className="one-fourth column centered">
-                <div className="menu">
-                    <div className="menu-heading">
-                        Login to server
-                    </div>
+
+                <div className="login-page">
+
                     <form
-                        className="mr-3 ml-3 mb-3"
+                        className="form"
                         onSubmit={ (event) => {
                             event.preventDefault();
 
@@ -35,9 +38,9 @@ class Login extends React.Component {
                         } }
                     >
                         <dl className="form-group">
-                            <dt><label>Name</label></dt>
                             <dd>
                                 <input
+                                    placeholder="Enter Username"
                                     className="form-control"
                                     type="text"
                                     name="name"
@@ -50,9 +53,9 @@ class Login extends React.Component {
                         </dl>
 
                         <dl className="form-group">
-                            <dt><label>Password</label></dt>
                             <dd>
                                 <input
+                                     placeholder="Enter Password"
                                     className="form-control"
                                     type="password"
                                     name="password"
@@ -65,9 +68,9 @@ class Login extends React.Component {
                         </dl>
 
                         <dl className="form-group">
-                            <dt><label>Server url</label></dt>
                             <dd>
                                 <input
+                                    placeholder="Enter Server Url"
                                     className="form-control"
                                     type="text"
                                     name="server"
@@ -83,23 +86,24 @@ class Login extends React.Component {
                             <input
                                 className="btn btn-primary"
                                 type="submit"
-                                value="SignUp"
-                            />
-                            <input
-                                className="btn btn-primary"
-                                type="submit"
-                                value="Login"
+                                value="login"
                             />
                         </div>
+                        <p class="message">Not registered?
+                          <a href="#" onClick={() => {this.props.changePage()}}>
+                            Create an account
+                          </a>
+                        </p>
                     </form>
                 </div>
-            </div>
         );
     }
 }
 
 Login.propTypes = {
-    submitHandler: React.PropTypes.func.isRequired
+    submitHandler: React.PropTypes.func.isRequired,
+    changePage: React.PropTypes.func.isRequired
+  //pageDirector: React.PropTypes.func.isRequired
 };
 
 module.exports = Login;

@@ -170,6 +170,7 @@ function Room ({ owner, game }) {
       let winner = null;
       for (const client of clients.values()) {
         if(client.getId() === id){
+          console.log("set winner");
           client.setWinner();
           winner = client.getName();
           winnerRank = findUserRank(winner);

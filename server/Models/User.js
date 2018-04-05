@@ -11,6 +11,9 @@ var UserSchema = mongoose.Schema({
 	password: {
 		type: String
 	},
+	email: {
+		type: String
+	},
 	highscore: {
 		type: Number,
 		required: true
@@ -55,32 +58,4 @@ module.exports.updateHighScore = function(user){
 			  									function(resp){console.log("done");	}
 												);
 	});
-
-// module.exports.entireCollection = function () {
-// 	let array = [];
-// 	const cursor = User.find({});
-// 	while(await cursor.hasNext()) {
-//   	const doc = await cursor.next();
-// 		array.push(doc);
-//   	// process doc here
-// }
-//
-// return array;
-// }
-
-// myCollection.find({}, function(err, resultCursor) {
-//   function processItem(err, item) {
-//     if(item === null) {
-//       return; // All done!
-//     }
-//
-//     externalAsyncFunction(item, function(err) {
-//       resultCursor.nextObject(processItem);
-//     });
-//
-//   }
-//
-//   resultCursor.nextObject(processItem);
-// }
-//
  }

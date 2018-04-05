@@ -19,6 +19,7 @@ function lerp (a, b, interpolation) {
 
 function ClientGame ({ options }) {
     const game = AbstractGame.create({ options });
+  //  game.
     //game.addPlanets();
     const serverGhosts = new Map();
     const localGhosts = new Map();
@@ -65,6 +66,8 @@ function ClientGame ({ options }) {
 
     function setLocalPlayer (player) {
         localPlayer = player;
+        console.log(localPlayer);
+
         //console.log("calljlsdjfa   " + canvasPos);
         game.setLocalPlayerId(player);
     }

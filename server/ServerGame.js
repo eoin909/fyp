@@ -55,21 +55,7 @@ function ServerGame ({ options }) {
     }
 
     function onUpdate (delta) {
-        //console.log("server game");
-        //game.update(delta);
-        // for (const player of game.getPlayers()) {
-        //   console.log("update server game");
-        //     player.update(delta);
-        // }
-        game.isGameOver();
-        //
-        // if(playersAlive.size < 2 ){
-        //   console.log("game over");
-        //   for (const player of playersAlive.values()) {
-        //     console.log("winner " + player.getControlledBy());
-        //   }
-        //   stop();
-        // }
+        game.isGameOver(delta);
         game.updateAI(delta);
         game.planetSystemUpdate(delta);
     }
