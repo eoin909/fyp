@@ -10,6 +10,7 @@ const Stats = require('../components/Stats');
 const debugMode = require('../debug').debugMode;
 const Table = require('../components/Table');
 const MapSelect = require('../components/MapSelect');
+const VirusSelect = require('../components/VirusSelect');
 //require('react-bootstrap-table/dist/react-bootstrap-table-all.min.css');
 
 class Lobby extends React.Component {
@@ -30,9 +31,8 @@ class Lobby extends React.Component {
               {"username":"david868","highscore":400,"rank":3},
               {"username":"jason","highscore":350,"rank":4},
               {"username":"edel568","highscore":200,"rank":5},
-              {"username":"Eoin909","highscore":0,"rank":6},
-              {"username":"eoin909","highscore":0,"rank":7},
-              {"username":"eoin989","highscore":0,"rank":8}]
+              {"username":"Eoin909","highscore":0,"rank":6}
+            ]
         };
     }
 
@@ -79,6 +79,7 @@ class Lobby extends React.Component {
             });
 
             socket.on('roomCreated', (data) => {
+              console.log(data);
                 this.setState({
                     rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
                 });
@@ -104,6 +105,14 @@ class Lobby extends React.Component {
                 });
             });
 
+            socket.on('onStartClientGame', (data) => {
+
+                this.setState({
+                 isGameStarted: true,
+                  rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
+                });
+            });
+
             socket.on('onLeftRoom', (data) => {
 
               this.setState({
@@ -118,6 +127,8 @@ class Lobby extends React.Component {
               });
             });
 
+
+
             socket.emit('register', {
                 name: this.props.name
             });
@@ -126,6 +137,21 @@ class Lobby extends React.Component {
         if (debugMode) {
             this.onCreateRoom();
         }
+    }
+
+
+
+
+    onVirusSelect (data) {
+      console.log("here cunt");
+      console.log("virus " +  data.virus);
+      // this.setState({
+      //   virus: data.virus
+      // });
+
+      if (this.state.socket) {
+          this.state.socket.emit('setClientVirus', {virus: data.virus} );
+      }
     }
 
     onLeaderBoard () {
@@ -139,6 +165,22 @@ class Lobby extends React.Component {
         }
     }
 
+    onJoinTeam (data) {
+        if (this.state.socket) {
+            this.state.socket.emit('joinTeam', data);
+        }
+    }
+
+    onMapSelect (data) {
+      console.log("here cunt");
+      console.log("map " + data.map);
+      // this.setState({
+      //   virus: data.map
+      // });
+      if (this.state.socket) {
+          this.state.socket.emit('setClientMap', {map: data.map} );
+      }
+    }
     onLeaveRoom (roomId) {
         if (this.state.socket) {
             this.state.socket.emit('leaveRoom', { roomId: roomId });
@@ -151,12 +193,10 @@ class Lobby extends React.Component {
         }
     }
 
-    onCreateRoom () {
-    //  console.log("create room");
-      console.log(this.state.socket);
+    onCreateRoom (data) {
+      console.log("create " + data);
         if (this.state.socket) {
-          console.log("if loop");
-            this.state.socket.emit('createRoom');
+            this.state.socket.emit('createRoom', data);
         }
     }
 
@@ -205,6 +245,7 @@ class Lobby extends React.Component {
                         <RoomList
                           rooms={ this.state.rooms }
                           onRoomClick={ this.onJoinRoom.bind(this) }
+                          onJoinTeam={ this.onJoinTeam.bind(this) }
                           onRoomCreateClick={ this.onCreateRoom.bind(this) }
                           onRoomLeaveClick={ this.onLeaveRoom.bind(this) }
                           onReadyClick = { this.onReadyRoom.bind(this) }
@@ -218,13 +259,17 @@ class Lobby extends React.Component {
                                             <div>
                                             <div className="one-half column">
                                               <div className="text-center">
-                                                <MapSelect/>
+                                                <MapSelect
+                                                setMap = { this.onMapSelect.bind(this) }
+                                                />
                                               </div>
                                             </div>
 
                                             <div className="one-half column">
                                               <div className="text-center">
-                                                <MapSelect/>
+                                                <VirusSelect
+                                                setVirus={ this.onVirusSelect.bind(this) }
+                                                />
                                               </div>
                                             </div>
                                             </div>

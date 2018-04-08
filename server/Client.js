@@ -9,6 +9,10 @@ function Client ({ socket, name }) {
     let color = null;
     let ai = false;
     let winner = false;
+    //random option as default
+    let map = 0;
+    let virus = 0;
+    let teamId = null;
 
     function emit (event, data) {
         socket.emit(event, data);
@@ -22,6 +26,15 @@ function Client ({ socket, name }) {
         socket.send(message);
     }
 
+    function setTeam(team) {
+      teamId=team;
+      console.log("team " + teamId);
+    }
+
+    function getTeam() {
+      console.log("team get " + teamId);
+      return teamId;
+    }
     function setCurrentRoom (room) {
         currentRoom = room;
     }
@@ -42,6 +55,21 @@ function Client ({ socket, name }) {
         return id;
     }
 
+    function getVirus() {
+      return virus;
+    }
+
+    function setVirus (value) {
+      virus=value;
+    }
+
+    function getMap() {
+      return map;
+    }
+
+    function setMap (value) {
+      map = value;
+    }
     function getReady() {
       return ready;
     }
@@ -91,6 +119,12 @@ function Client ({ socket, name }) {
         isInRoom,
         emit,
         on,
+        getTeam,
+        setTeam,
+        setMap,
+        getMap,
+        setVirus,
+        getVirus,
         send,
         setCurrentRoom,
         getReady,

@@ -1,0 +1,23 @@
+.label-shit {
+  border: 1px solid #fff;
+  box-shadow: 0 0 3px 3px #090;
+
+}
+
+// .cc-selector input{
+//     margin:0;padding:0;
+//     -webkit-appearance:none;
+//        -moz-appearance:none;
+//             appearance:none;
+// }
+
+.hidden input{
+    margin:0;padding:0;
+    -webkit-appearance:none;
+       -moz-appearance:none;
+            appearance:none;
+ &:checked {
+   border: 1px solid #fff;
+   box-shadow: 0 0 3px 3px #090;
+ }
+}

@@ -49,3 +49,218 @@
 .input-group-button:last-child .btn {
   margin-left: -1px;
 }
+// .class-selector input{
+//     margin:0;padding:0;
+//     -webkit-appearance:none;
+//        -moz-appearance:none;
+//             appearance:none;
+// }
+//
+// .class-selector input[type=radio]:checked + label>img {
+//   border: 1px solid #fff;
+//   box-shadow: 0 0 3px 3px #090;
+// }
+// .input-hidden {
+//   position: absolute;
+//   left: -9999px;
+//   visibility:hidden;
+// }
+//
+// input[type=radio]:checked + label>img {
+//   border: 1px solid #fff;
+//   box-shadow: 0 0 3px 3px #090;
+//   // visibility:hidden;
+// }
+//
+// /* Stuff after this is only to make things more pretty */
+// input[type=radio] + label>img {
+//   border: 1px dashed #444;
+//   width: 150px;
+//   height: 150px;
+//   transition: 500ms all;
+// }
+
+// .image-radio {
+//   input[type=radio] {
+//     display: none;
+//   }
+//   input[type=radio] + label {
+//     background: asset-url('icons/choice-unchecked.svg') no-repeat left;
+//     padding-left: 2rem;
+//   }
+//   input[type=radio]:checked + label {
+//     background: asset-url('icons/choice-checked.svg') no-repeat left;
+//   }
+// }
+//
+//
+//
+// .check
+// {
+//     opacity:0.5;
+// 	color:#996;
+// }
+// .box{
+//     margin-bottom:5px;
+// }
+
+//
+//
+// @import url('https://fonts.googleapis.com/css?family=Dax:400,900');
+// $font: 'Dax',
+// sans-serif;
+// $white: #fff;
+// $green: #007e90;
+//
+//
+// .middle {
+//   width: 100%;
+//   text-align: center;
+//   h1 {
+//     font-family: $font;
+//     color: $white;
+//   }
+//   input[type="radio"] {
+//     display: none;
+//     &:checked {
+//       + .box {
+//         background-color: $green;
+//         span {
+//           color: white;
+//           transform: translateY(70px);
+//           &:before {
+//             transform: translateY(0px);
+//             opacity: 1;
+//           }
+//         }
+//       }
+//     }
+//   }
+//   .box {
+//     width: 200px;
+//     height: 200px;
+//     background-color: $white;
+//     transition: all 250ms ease;
+//     will-change: transition;
+//     display: inline-block;
+//     text-align: center;
+//     cursor: pointer;
+//     position: relative;
+//     font-family: $font;
+//     font-weight: 900;
+//     &:active{
+//       transform: translateY(10px);
+//     }
+//     span {
+//       position: absolute;
+//       transform: translate(0, 60px);
+//       left: 0;
+//       right: 0;
+//       transition: all 300ms ease;
+//       font-size: 1.5em;
+//       user-select: none;
+//       color: $green;
+//       &:before {
+//         font-size: 1.2em;
+//         font-family: FontAwesome;
+//         display: block;
+//         transform: translateY(-80px);
+//         opacity: 0;
+//         transition: all 300ms ease-in-out;
+//         font-weight: normal;
+//         color: white;
+//       }
+//     }
+//   }
+//   .front-end {
+//     span {
+//       &:before {
+//         src: url("//www.w3schools.com/w3css/img_lights.jpg");
+//       }
+//     }
+//   }
+//   .back-end {
+//     span {
+//       &:before {
+//         src: url("//placekitten.com/151/151");
+//       }
+//     }
+//   }
+//
+//   /* Made by */
+//   p {
+//     color: $white;
+//     font-family: $font;
+//     font-weight: 400;
+//     span {
+//       &:after {
+//         content: '\f0e7';
+//         font-family: FontAwesome;
+//         color: yellow;
+//       }
+//     }
+//   }
+// }
+
+// .cc-selector input {
+//   margin: 0;
+//   padding: 0;
+//   -webkit-appearance: none;
+//   -moz-appearance: none;
+//   appearance: none;
+// }
+
+// .visa {
+//   background-image: url(http://i.imgur.com/lXzJ1eB.png);
+// }
+//
+// .mastercard {
+//   background-image: url(http://i.imgur.com/SJbRQF7.png);
+// }
+//
+// .cc-selector input[type=radio]:checked {
+//     margin: 0;
+//     padding: 0;
+//     -webkit-appearance: none;
+//     -moz-appearance: none;
+//     appearance: none;
+// }
+
+//
+// .drinkcard-cc {
+//   cursor: pointer;
+//   background-size: contain;
+//   background-repeat: no-repeat;
+//   display: inline-block;
+//   width: 100px;
+//   height: 70px;
+//   -webkit-transition: all 100ms ease-in;
+//   -moz-transition: all 100ms ease-in;
+//   transition: all 100ms ease-in;
+//   -webkit-filter: brightness(1.8) grayscale(1) opacity(0.7);
+//   -moz-filter: brightness(1.8) grayscale(1) opacity(0.7);
+//   filter: brightness(1.8) grayscale(1) opacity(0.7);
+//   &:hover {
+//     -webkit-filter: brightness(1.2) grayscale(0.5) opacity(0.9);
+//     -moz-filter: brightness(1.2) grayscale(0.5) opacity(0.9);
+//     filter: brightness(1.2) grayscale(0.5) opacity(0.9);
+//   }
+// }
+//
+// // input[type="radio"]:checked {
+// //   visibility: hidden;
+// // }
+//
+// /* Extras */
+//
+// a {
+//   &:visited {
+//     color: #888;
+//   }
+//   color: #444;
+//   text-decoration: none;
+// }
+//
+// p {
+//   margin-bottom: .3em;
+// }

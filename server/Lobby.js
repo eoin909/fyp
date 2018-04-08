@@ -19,10 +19,11 @@ function Lobby ({ config }) {
         room.startGame(room, rankedArray);
     }
 
-    function createGame (client) {
+    function createGame (client, gameMode) {
         const room = Room.create({
             owner: client,
-            game: ServerGame.create({ options: config })
+            game: ServerGame.create({ options: config }),
+            gameMode
         });
 
         rooms.set(room.getId(), room);
@@ -90,6 +91,28 @@ function Lobby ({ config }) {
             }
         });
 
+        client.on('joinTeam', (data) => {
+          //rankDB();
+
+            const room = rooms.get(data.roomId);
+
+            // console.log("is game started ", room.isGameStarted());
+
+            // if (room && !client.isInTeam() && !room.isGameStarted()) {
+            if (room && !room.isGameStarted()) {
+
+                client.setTeam(data.team);
+            //if (room && !client.isInRoom()) {
+                room.join(client);
+              //  room.joinTeam(client);
+                client.setCurrentRoom(room);
+
+                room.emit('onJoinedRoom', { room: room.toJSON() });
+
+                log('client joined room');
+            }
+        });
+
         client.on('displayLeaderBoard', (data) => {
             User.find()
                 .then(function(doc) {
@@ -116,10 +139,18 @@ function Lobby ({ config }) {
                     console.error('App starting error:', err.stack);
                     process.exit(1);
                 });
+        });
 
-            //rankDB();
+        client.on('setClientMap', (data) => {
+          console.log(data.map);
 
+          client.setMap(data.map)
+        });
 
+        client.on('setClientVirus', (data) => {
+          console.log(data.virus);
+
+          client.setVirus(data.virus);
         });
 
         client.on('readyRoom', (data) => {
@@ -172,8 +203,8 @@ function Lobby ({ config }) {
             }
         });
 
-        client.on('createRoom', () => {
-            createGame(client);
+        client.on('createRoom', (data) => {
+            createGame(client, data.gameMode);
         });
 
         log('\t socket.io:: player ' + client.getId() + ' connected');

@@ -5,6 +5,27 @@ const React = require('react');
 
 class RoomList extends React.Component {
 
+  getJoinTeamButton(data){
+
+console.log(typeof data);
+    console.log(data);
+    console.log(this.state);
+    console.log(this.props);
+    console.log(this);
+    if (Object.keys(data.clients).length < 2){
+      return (
+        <button className="btn btn-sm btn-primary menu-btn"
+          onClick={ this.props.onJoinTeam.bind(this, {roomId:this.props.currentRoomId, team: data.team}) } >
+          Join Team
+        </button>
+      ) ;
+    } else {
+      return (
+        null
+      );
+    }
+  }
+
   getButton (data){
     if(data.ready ===false){
     return (
@@ -48,31 +69,80 @@ class RoomList extends React.Component {
                         <span className="menu-item" >
                             Room id: { this.props.currentRoomId }
                         </span>
-                        <span className="menu-item" >
-                            { this.props.rooms.filter(room => room.id === this.props.currentRoomId).map((room, index) => {
-                                return (
 
-                                    <span className="menu-item" key={ index } >
-                                        <span    className="css-truncate">
-                                        {
 
-                                        room.clients.map((client, index) => {
-                                            return (
-                                            <span className="menu-item" key={ index } >
+                        <span className="menu-item"  >
 
-                                                <span className = "css-truncate" >
-                                                
-                                                { client.name}
+                        {
+                          this.props.rooms.filter(room => room.id === this.props.currentRoomId).map((room, index) => {
+                            return (
+                              (room.gameMode === "Teams") ? (
+                                  <span className="menu-item" key={ index } >
+                                      <span    className="css-truncate">
+                                          {
+                                            room.teams.map((team, index1) => {
+                                              return (
+                                                <span>
+                                                <span className="menu-heading  menu-item" key={ index1 } >
+                                                  <span className = "css-truncate" >
+                                                    { team.team }
+                                                  </span>
+                                                  {this.getJoinTeamButton(team)}
                                                 </span>
-                                                {this.getButton(client)}
-                                            </span>
-                                            );
-                                        }) }
+
+                                              <span className="menu-item"  >
+                                                {team.clients.map( (client, index2) => {
+                                                  return (
+                                                    <span className="menu-item" key={ index2 } >
+                                                      <span className = "css-truncate" >
+                                                       { client.name }
+                                                      </span>
+                                                      {this.getButton(client)}
+                                                    </span>
+                                                );})}
+                                              </span>
+                                              </span>
+                                              );
+                                            }
+                                          )
+                                        }
+                                      </span>
                                     </span>
-                                </span>
+
+
+
+                                ):(
+
+
+
+                                  room.clients.map((client, index) => {
+                                    return (
+                                      <span className="menu-item" key={ index } >
+
+                                      <span className = "css-truncate" >
+
+                                      { client.name}
+                                      </span>
+                                      {this.getButton(client)}
+                                      </span>
+                                    );
+                                  })
+
+
+
+
+                              )
                             );
-                        }) }
-                        </span>
+                          })
+                        }
+
+
+
+                      </span>
+
+
+
+
                     </div>
 
 
@@ -81,9 +151,15 @@ class RoomList extends React.Component {
                             <span className="menu-heading">Rooms
                                 <button
                                     className="btn btn-sm btn-primary menu-btn"
-                                    onClick={ this.props.onRoomCreateClick }
+                                    onClick={ this.props.onRoomCreateClick.bind(this, {gameMode: "Free For All"}) }
                                 >
-                                    Create room
+                                    Free For All
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-primary menu-btn"
+                                    onClick={ this.props.onRoomCreateClick.bind(this, {gameMode: "Teams"}) }
+                                >
+                                    Teams
                                 </button>
                             </span>
                                 { this.props.rooms.map((room, index) => {
@@ -93,15 +169,21 @@ class RoomList extends React.Component {
                                                 className="css-truncate"
                                             >
                                                 Room id: { room.id }
+                                                {!room.isGameStarted ? (
+                                                <button
+                                                    className="btn btn-sm menu-btn"
+                                                    onClick={ this.props.onRoomClick.bind(this, room) }
+                                                >
+                                                    Join
+                                                </button>
+                                              ) : (null)}
                                             </span>
-                                            {!room.isGameStarted ? (
-                                            <button
-                                                className="btn btn-sm menu-btn"
-                                                onClick={ this.props.onRoomClick.bind(this, room) }
+                                            <span
+                                                className="css-truncate centered"
                                             >
-                                                Join
-                                            </button>
-                                          ) : (null)}
+                                                Game Mode: { room.gameMode }
+                                            </span>
+
                                         </span>
                                     );
                                 }) }
@@ -119,6 +201,7 @@ class RoomList extends React.Component {
 RoomList.propTypes = {
     rooms: React.PropTypes.array.isRequired,
     onRoomClick: React.PropTypes.func.isRequired,
+    onJoinTeam: React.PropTypes.func.isRequired,
     onReadyClick: React.PropTypes.func.isRequired,
     onRoomCreateClick: React.PropTypes.func.isRequired,
     onRoomLeaveClick: React.PropTypes.func.isRequired,
