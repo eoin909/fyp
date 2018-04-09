@@ -8,7 +8,8 @@ const CellMap = require('./CellMap.js');
 const Client = require('./Client');
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
+// mongoose.connect('mongodb://localhost:27017/LeaderBoard');
 
 function Room ({ owner, game, gameMode, deleteRoom}) {
     const id = uuid.v4();
@@ -78,101 +79,87 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     }
 
     function join (client) {
-        clients.add(client);
-
-        if (gameMode === 'Teams'){
-          console.log("client.getTeam() " + client.getTeam());
-          if (client.getTeam()=== 'Team 1'){
-            team1.set(client.getId(), client);
-            if (team2.has(client.getId())) {
-              team2.delete(client.getId());
-            }
-          } else if (client.getTeam()=== 'Team 2'){
-            team2.set(client.getId(), client);
-            if (team1.has(client.getId())) {
-              team1.delete(client.getId());
-            }
+      clients.add(client);
+      if (gameMode === 'Teams'){
+        if (client.getTeam()=== 'Team 1'){
+          team1.set(client.getId(), client);
+          if (team2.has(client.getId())) {
+            team2.delete(client.getId());
+          }
+        } else if (client.getTeam()=== 'Team 2'){
+          team2.set(client.getId(), client);
+          if (team1.has(client.getId())) {
+            team1.delete(client.getId());
           }
         }
+      }
 
+      if (!game.isStarted()) {
 
-        if (!game.isStarted()) {
+        const virus = Virus.create({
+          id: client.getId(),
+          name: client.getName(),
+          virusID: 1
+        });
 
-            const virus = Virus.create({
-                id: client.getId(),
-                name: client.getName(),
-                virusID: 1
-            });
-
-            for (const roomClient of clients) {
-                if (roomClient !== client && !roomClient.isAI) {
-                    roomClient.emit('playerJoined', virus.toJSON());
-                }
-            }
+        for (const roomClient of clients) {
+          if (roomClient !== client && !roomClient.isAI) {
+            roomClient.emit('playerJoined', virus.toJSON());
+          }
         }
+      }
     }
 
     function leave (client) {
       clients.delete(client);
-
         if (game.isStarted()) {
-          //  const player = game.getNetwork().getPlayerByClient(client);
-
             for (const roomClient of clients) {
                 if (roomClient !== client && !roomClient.isAI) {
                     roomClient.emit('playerLeft', client.getId());
                 }
             }
-
             game.removeVirus(client.getId());
-            //game.getNetwork().removeClientPlayer(client);
             game.getNetwork().removeClientPlanetSystem(client);
         }
-
     }
 
     function startGame (room, dbArray) {
-        db = dbArray;
-        let choice = tallyVotes();
-        choice = 2;
-        let map = CellMap.create({num:choice});
-        game.addPlanets(map);
+      db = dbArray;
+      let choice = tallyVotes();
+      console.log("MAP " + choice);
+      let map = CellMap.create({num:choice});
+      game.addPlanets(map);
 
-        for (const client of clients) {
-          let color =  it.next().value;
-          client.setColor(color);
+      for (const client of clients) {
+        let color =  it.next().value;
+        client.setColor(color);
+        console.log("client.getname " + client.getName());
+        console.log("client.getVirus " + client.getVirus());
+        const virus = Virus.create({
+          id: client.getId(),
+          name: client.getName(),
+          color,
+          virusID: client.getVirus()
+        });
 
-          const virus = Virus.create({
-              id: client.getId(),
-              name: client.getName(),
-              color,
-              virusID: client.getVirus()
-          });
+        game.addVirus(virus);
+        game.getNetwork().addClientPlanetSystem(client, game.getPlanetSystem());
+      }
 
-          game.addVirus(virus);
-          game.getNetwork().addClientPlanetSystem(client, game.getPlanetSystem());
+      while ( clients.size < 4 ){
+        let color =  it.next().value;
+        let serverVirus = getAIClient(color);
+        game.addServerVirus(serverVirus);
+      }
 
-            //game.getNetwork().addClientPlanet(client, virus);
+      for (const client of clients) {
+        if(!client.isAI()){
+          client.emit('onStartClientGame', { room: room.toJSON() });
+          client.emit('startGame', game.getStateForPlanetSystem(client.getId()));
         }
-
-        while ( clients.size < 4 ){
-          let color =  it.next().value;
-          let serverVirus = getAIClient(color);
-          game.addServerVirus(serverVirus);
-        }
-
-        for (const client of clients) {
-            //const virus = game.getNetwork().getVirusByClient(client);
-            //console.log("print out client id " + client.getId());
-            if(!client.isAI()){
-              client.emit('onStartClientGame', { room: room.toJSON() });
-              client.emit('startGame', game.getStateForPlanetSystem(client.getId()));
-            }
-        }
-
-        log('game started');
-
-        game.startServerGame(room);
+      }
+      log('game started');
+      game.startServerGame(room);
     }
 
     function endGame () {
@@ -191,10 +178,13 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       let winner = null;
       for (const client of clients.values()) {
         if(client.getId() === id){
-          console.log("set winner");
           client.setWinner();
-          winner = client.getName();
-          winnerRank = findUserRank(winner);
+          winner = client;
+          if(winner.isAI()){
+            winnerRank = db.length/2;
+          } else {
+            winnerRank = findUserRank(winner.getName());
+          }
         }
       }
 
@@ -207,28 +197,30 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
         winnerScore += Math.floor(Math.sqrt(rank)*db.length*10);
 
         let score = -Math.floor(Math.sqrt(winnerRank)*db.length);
-
-        User.updateHighScore(
-                              new User({
-                                username: client.getName(),
-                                highscore: score
-                              })
-                            );
+        if (typeof score === 'number'){
+          User.updateHighScore(
+                                new User({
+                                  username: client.getName(),
+                                  highscore: score
+                                })
+                              );
+          }
         } else if (client.isAI()) {
-            winnerScore += 200;
+            winnerScore += Math.floor(Math.sqrt((db.length/2))*db.length*10);
           }
       }
 
       if(!winner.isAI()) {
         winnerScore = Math.floor(winnerScore/Math.sqrt(winnerRank))
-        User.updateHighScore(
-                              new User({
-                                username: winner,
-                                highscore: winnerScore
-                              })
-                            );
+        if (typeof winnerScore === 'number'){
+          User.updateHighScore(
+                                new User({
+                                  username: winner.getName(),
+                                  highscore: winnerScore
+                                })
+                              );
+        }
       }
-
       endGame();
     }
 
@@ -237,7 +229,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       let winningTeam = null;
       let losingTeamRank = null;
       let losingTeam = null;
-      console.log("db " + db.length);
 
       if ('Team 1' === team){
         winningTeam = team1;
@@ -246,62 +237,54 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
         winningTeam = team2;
         losingTeam = team1;
       }
-
+      let dataBaseLength = db.length;
       for (const player of winningTeam.values()) {
         if(player.isAI()){
-          winningTeamRank += (db.lenght)/2
-          console.log("(db.lenght)/2 " + (db.lenght)/2 );
+          winningTeamRank += (dataBaseLength*0.5);
         }
         else {
           winningTeamRank += findUserRank(player.getName());
-          console.log("rank " + findUserRank(player.getName()));
-          console.log("name " + player.getName());
         }
       }
       winningTeamRank = winningTeamRank/(winningTeam.size);
 
-      console.log("winningTeamRank " + winningTeamRank);
-
       for (const player of losingTeam.values()) {
         if(player.isAI()){
-          losingTeamRank += (db.lenght)/2
+          losingTeamRank += (dataBaseLength)/2;
         } else {
           losingTeamRank += findUserRank(player.getName());
         }
       }
+
       losingTeamRank = losingTeamRank/(losingTeam.size);
-
-      console.log("losingTeamRank " + losingTeamRank);
-
-
-
-      let winnerTeamScore = Math.floor((Math.sqrt(losingTeamRank)*db.length*10)/Math.sqrt(winningTeamRank));
-
-      let losingTeamScore = Math.floor((Math.sqrt(winningTeamRank)*db.length)/Math.sqrt(losingTeamRank));
-
+      let winnerTeamScore = Math.floor((Math.sqrt(losingTeamRank)*dataBaseLength*10)/Math.sqrt(winningTeamRank));
+      let losingTeamScore = -Math.floor((Math.sqrt(winningTeamRank)*dataBaseLength)/Math.sqrt(losingTeamRank));
 
       for (const  player of winningTeam.values()) {
         if(!player.isAI()){
-          User.updateHighScore(
-                                new User({
-                                  username: player.getName(),
-                                  highscore: winnerTeamScore
-                                })
-                              );
+          if(typeof winnerTeamScore === 'number'){
+            User.updateHighScore(
+                                  new User({
+                                    username: player.getName(),
+                                    highscore: winnerTeamScore
+                                  })
+                                );
+          }
         }
       }
 
       for (const player of losingTeam.values()) {
         if(!player.isAI()){
-          User.updateHighScore(
-                                new User({
-                                  username: player.getName(),
-                                  highscore: losingTeamScore
-                                })
-                              );
+          if(typeof losingTeamScore === 'number'){
+            User.updateHighScore(
+                                  new User({
+                                    username: player.getName(),
+                                    highscore: losingTeamScore
+                                  })
+                                );
+          }
         }
       }
-
       endGame();
     }
 
@@ -311,8 +294,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       while(!namepicked){
        let x = Math.floor((Math.random() * names.length));
        name = names[x];
-       console.log("name Ai " + name);
-
       for (const client of clients) {
           if (name === client.getName()) {
               namepicked=false;
@@ -325,7 +306,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     }
 
     function findUserRank (name) {
-
       for (var i = 0; i < db.length; i++) {
         if(db[i].username === name){
           return (i+1);
@@ -337,11 +317,9 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     function tallyVotes() {
       let votes = new Array(7).fill(0);
       for (const client of clients.values()) {
-
         if(!client.isAI()){
           votes[client.getMap()] +=1;
         }
-
       }
 
       let max=0;
@@ -376,14 +354,12 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
         team2.set(client.getId(), client);
       }
     }
-
     const virus = Virus.create({
         id: client.getId(),
         name: client.getName(),
         color,
         virusID: 20
     });
-
     return virus;
   }
 
@@ -410,7 +386,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
   }
 
   function toJSON () {
-    if (gameMode === 'Teams'){
+    if ( gameMode === 'Teams' ){
       return {
           id,
           isGameStarted: game.isStarted(),
@@ -424,7 +400,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
                             name: client.getName(),
                             ready: client.getReady(),
                             color: client.getColor()
-                            //,winner: client.getWinner()
                         };
                       })) : []
                   },
@@ -436,13 +411,12 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
                             name: client.getName(),
                             ready: client.getReady(),
                             color: client.getColor()
-                            //,winner: client.getWinner()
                         };
                       })) : []
                     }
                 ]
     };
-  }else {
+  } else {
 
       return {
           id,
@@ -454,7 +428,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
                   name: client.getName(),
                   ready: client.getReady(),
                   color: client.getColor()
-                  //,winner: client.getWinner()
               };
           })
       };

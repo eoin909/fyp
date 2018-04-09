@@ -8,12 +8,12 @@ function ServerPlanet ({  id, name, color, virusID }) {
     switch (virusID) {
                       case 20:
                               return ServerVirus.create({
-                                                          id,
-                                                          name,
-                                                          color
-                                                        });
+                                  id,
+                                  name,
+                                  color
+                                  });
                               break;
-                        case 0:
+                        case 1:
                               return Virus.create({
                                   id,
                                   name,
@@ -22,7 +22,7 @@ function ServerPlanet ({  id, name, color, virusID }) {
                                   agility: 60,
                                   strength: 90
                               });
-                        case 1:
+                        case 2:
                               return Virus.create({
                                   id,
                                   name,
@@ -32,7 +32,7 @@ function ServerPlanet ({  id, name, color, virusID }) {
                                   strength: 60
                               });
 
-                        case 2:
+                        case 3:
                               return Virus.create({
                                   id,
                                   name,
@@ -42,7 +42,7 @@ function ServerPlanet ({  id, name, color, virusID }) {
                                   strength: 60
                               });
 
-                        case 3:
+                        case 4:
                               return Virus.create({
                                   id,
                                   name,

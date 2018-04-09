@@ -7,8 +7,8 @@ const debug = require('debug');
 const log = debug('game:server/server');
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/LeaderBoard');
-
+// mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
 function Lobby ({ config }) {
     const rooms = new Map();
     const clients = new Map();
@@ -32,8 +32,6 @@ function Lobby ({ config }) {
 
         client.emit('onJoinedRoom', { room: room.toJSON() });
 
-        //startGame(room);
-
         log('player ' + client.getId() + ' created a room with id ' + room.getId());
 
         for (const lobbyClient of clients.values()) {
@@ -49,6 +47,7 @@ function Lobby ({ config }) {
             // stop the game updates immediate
             if(room.isGameStarted())
               room.endGame();
+              room.emit("currentRoomDeleted", {roomId});
 
             for (const lobbyClient of clients.values()) {
                 lobbyClient.emit('roomDeleted', { roomId });
@@ -77,40 +76,24 @@ function Lobby ({ config }) {
 
         client.on('joinRoom', (data) => {
           rankDB();
-            const room = rooms.get(data.roomId);
-
-            // console.log("is game started ", room.isGameStarted());
-
-            if (room && !client.isInRoom() && !room.isGameStarted()) {
-
-            //if (room && !client.isInRoom()) {
-                room.join(client);
-                client.setCurrentRoom(room);
-
-                room.emit('onJoinedRoom', { room: room.toJSON() });
-
-                log('client joined room');
-            }
+          const room = rooms.get(data.roomId);
+          if (room && !client.isInRoom() && !room.isGameStarted()) {
+            room.join(client);
+            client.setCurrentRoom(room);
+            room.emit('onJoinedRoom', { room: room.toJSON() });
+            log('client joined room');
+          }
         });
 
         client.on('joinTeam', (data) => {
-          //rankDB();
-
-            const room = rooms.get(data.roomId);
-
-            // console.log("is game started ", room.isGameStarted());
-
-            // if (room && !client.isInTeam() && !room.isGameStarted()) {
-            if (room && !room.isGameStarted()) {
-
-                client.setTeam(data.team);
-                room.join(client);
-                client.setCurrentRoom(room);
-
-                room.emit('onJoinedRoom', { room: room.toJSON() });
-
-                log('client joined room');
-            }
+          const room = rooms.get(data.roomId);
+          if (room && !room.isGameStarted()) {
+            client.setTeam(data.team);
+            room.join(client);
+            client.setCurrentRoom(room);
+            room.emit('onJoinedRoom', { room: room.toJSON() });
+            log('client joined room');
+          }
         });
 
         client.on('displayLeaderBoard', (data) => {
@@ -119,9 +102,7 @@ function Lobby ({ config }) {
                   for (var i = 0; i < doc.length; i++) {
                     updateDataBase(doc[i]);
                   }
-                  console.log("here");
                   let dataRecorsArray = rankDB();
-                  console.log("size " + dataRecorsArray.length);
                   let recordData =  {
                           columns: ['Rank', 'UserName', 'Highscore'],
                           records: dataRecorsArray.map(record => {
@@ -129,7 +110,6 @@ function Lobby ({ config }) {
                               UserName: record.username,
                               Highscore: record.highscore ,
                               Rank: findUserRank(record.username, dataRecorsArray)
-                              //,winner: client.getWinner()
                           };
                       })
                   };
@@ -142,43 +122,31 @@ function Lobby ({ config }) {
         });
 
         client.on('setClientMap', (data) => {
-        //  console.log(data.map);
-
           client.setMap(data.map)
         });
 
         client.on('setClientVirus', (data) => {
-        //  console.log(data.virus);
-
           client.setVirus(data.virus);
         });
 
         client.on('readyRoom', (data) => {
-            const room = rooms.get(data.roomId);
-
-            if (room && client.isInRoom()) {
-              //  room.join(client);
-                //client.setCurrentRoom(room);
-
-                client.setReady(true);
-                //console.log(JSON.stringify(room.toJSON()));
-                room.emit('onReadyClient', { room: room.toJSON() });
-
-                //console.log("size of game " + room.getSize());
-                if( room.getSize()>1){
-                  //console.log("everyone ready " + room.checkReady());
-                  if (room.checkReady()){
-                    User.find()
-                        .then(function(doc) {
-                          for (var i = 0; i < doc.length; i++) {
-                            updateDataBase(doc[i]);
-                          }
-                          startGame(room);
-                        });
-                  };
-                }
-                log('client joined room');
-            }
+          const room = rooms.get(data.roomId);
+          if (room && client.isInRoom()) {
+            client.setReady(true);
+            room.emit('onReadyClient', { room: room.toJSON() });
+            if( room.getSize()>1){
+              if (room.checkReady()){
+                User.find()
+                  .then(function(doc) {
+                    for (var i = 0; i < doc.length; i++) {
+                      updateDataBase(doc[i]);
+                    }
+                    startGame(room);
+                  });
+                };
+              }
+            log('client joined room');
+          }
         });
 
         client.on('leaveRoom', (data) => {
@@ -197,7 +165,6 @@ function Lobby ({ config }) {
 
                 if(room.isGameStarted() && room.getNonAISize() === 0){
                   endGame(room.getId());
-                  //client.emit('onLeftRoom', { room: room.toJSON() });
                 }
             }
         });
@@ -210,17 +177,11 @@ function Lobby ({ config }) {
 
         client.on('message', (message) => {
             const parts = message.split('.');
-            //console.log("spliting up data");
             const inputCommands = parts[0].split('-');
             const inputTime = parts[1].replace('-', '.');
             const inputSeq = parts[2];
-
             const room = client.getCurrentRoom();
-
-/////change this back after fix
             if (room) {
-
-            // if (room && room.isGameStarted()) {
                 room.receiveClientInput(client, inputCommands, inputTime, inputSeq);
             } else {
                 log('no room to receive input');

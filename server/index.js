@@ -13,7 +13,8 @@ const log = debug('game:server/index');
 
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+//mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
 
 function start () {
     const config = Object.assign({}, gameConfig, serverConfig);

@@ -87,6 +87,13 @@ class Lobby extends React.Component {
                 });
             });
 
+            socket.on('currentRoomDeleted', (data) => {
+                this.setState({
+                  isGameStarted: false,
+                  currentRoomId: null
+                });
+            });
+
             socket.on('onReadyClient', (data) => {
                 this.setState({
                   rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
@@ -96,7 +103,7 @@ class Lobby extends React.Component {
             socket.on('onStartClientGame', (data) => {
 
                 this.setState({
-                 isGameStarted: true,
+                  isGameStarted: true,
                   rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
                 });
             });
@@ -104,7 +111,8 @@ class Lobby extends React.Component {
             socket.on('onLeftRoom', (data) => {
 
               this.setState({
-                   currentRoomId: null
+                  isGameStarted: false,
+                  currentRoomId: null
               });
             });
 
