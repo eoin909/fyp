@@ -83,13 +83,6 @@ function ClientGame ({ options }) {
         };
     }
 
-    function clearPlayers () {
-        game.clearPlayers();
-
-        serverGhosts.clear();
-        localGhosts.clear();
-    }
-
     function getLocalPlayer () {
         return localPlayer;
     }
@@ -210,11 +203,6 @@ function ClientGame ({ options }) {
         // even more so. See 'the bouncing ball problem' on Wikipedia.
         //if (options.naiveApproach) {
         if (true) {
-
-
-        //  console.log("onServerUpdate");
-        //  console.log(data);
-            // localPlayer.setPosition(data.ownPlayer.position.x, data.ownPlayer.position.y);
 
             for (const planetData of data.planets) {
 
@@ -414,7 +402,6 @@ function ClientGame ({ options }) {
     return Object.freeze(Object.assign({}, game, {
         getGhosts,
         getServerTime,
-        clearPlayers,
         getLocalPlayer,
         addAfterViewLoopHook,
         removeAfterViewLoopHook,

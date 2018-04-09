@@ -1,7 +1,6 @@
 'use strict';
 
 const uuid = require('node-uuid');
-const Player = require('./ServerPlayer');
 const Virus = require('./ServerVirus');
 const debug = require('debug');
 const log = debug('game:server/Room');

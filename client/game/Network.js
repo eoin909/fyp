@@ -42,7 +42,7 @@ function Network ({ game, socket, pingTimeout }) {
 
         console.log('server time is about ' + game.getServerTime());
 
-        game.clearPlayers();
+      //  game.clearPlayers();
 
         console.log(data);
         console.log(JSON.stringify(data));

@@ -15,7 +15,7 @@ function ServerGame ({ options }) {
             //console.log(JSON.stringify(game.getStateForPlayer));
             //console.log("servergame update network");
 
-            game.clearEvents();
+          //  game.clearEvents();
         }
     });
 

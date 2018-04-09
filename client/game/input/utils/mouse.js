@@ -1,7 +1,6 @@
 'use strict';
 
 var clicked	= false;
-const collisionSystem = require('../../../../lib/CollisionSystem1');
 const localPlayerId = [];
 const planetSelected = new Map();
 

@@ -3,7 +3,6 @@
 const React = require('react');
 const Login = require('../components/Login');
 const Register = require('../components/Register');
-const Settings = require('../components/Settings');
 const Help = require('../components/Help');
 const Lobby = require('./Lobby');
 const debugMode = require('../debug').debugMode;
