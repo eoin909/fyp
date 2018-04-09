@@ -13,7 +13,9 @@ function Mouse (game) {
   let localPlayer = null;
 
   function click (event) {
-        clicked=true;
+    let mouse = getMousePos(event)
+    console.log("x: " + mouse.x + " y: " + mouse.y);
+    clicked=true;
   }
 
     function unclick (event) {

@@ -21,6 +21,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     colors.set( "red", '#FF0000');
     colors.set( "Aqua",  '#00ffff');
     colors.set( "pink", '#ff00ff');
+    colors.set("orange", "#f37a3e");
     colors.set( "green", '#33cc33');
     colors.set( "Tan",  '#00ffff');
     colors.set( "yellow", '#FFFF00');
@@ -134,7 +135,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     function startGame (room, dbArray) {
         db = dbArray;
         let choice = tallyVotes();
-        console.log("db " + db.length);
+        choice = 2;
         let map = CellMap.create({num:choice});
         game.addPlanets(map);
 

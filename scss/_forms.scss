@@ -93,9 +93,43 @@ fieldset {
 //       box-shadow: 0 0 3px 3px #090;
 // }
 input:checked ~ .img-class  {
-	border: 2px solid #f00;
-
+	border: 2px solid #fff;
+  box-shadow: 0 0 3px 3px #090;
+  // height: 190px;
+  // width: 210px
 }
+
+.img-class {
+  border: 1px dashed #444;
+  height: 170px;
+  width: 190px;
+  transition: 600ms all;
+
+  &:hover {
+    height: 375px;
+    width: 415px
+  }
+}
+
+.img-class-map {
+  border: 1px dashed #444;
+  height: 170px;
+  width: 300px;
+  transition: 600ms all;
+
+  &:hover {
+    height: 340px;
+    width: 600px
+  }
+}
+
+input:checked ~ .img-class-map  {
+	border: 2px solid #fff;
+  box-shadow: 0 0 3px 3px #090;
+  // height: 190px;
+  // width: 210px
+}
+
 // .label-class {
 //
 //     input:checked ~ img{

@@ -1,22 +1,16 @@
 'use strict';
 
-const uuid = require('node-uuid');
 const Virus = require('../lib/Virus');
 const ServerVirus = require('../lib/ServerVirus');
 
-function ServerPlanet ({  id, name, color, virusID, x = 300, y = 300, width = 16, height = 16, speed = 50 }) {
-  console.log("client.getId() " + id);
+function ServerPlanet ({  id, name, color, virusID }) {
+
     switch (virusID) {
                       case 20:
                               return ServerVirus.create({
                                                           id,
                                                           name,
-                                                          color,
-                                                          x,
-                                                          y,
-                                                          width,
-                                                          height,
-                                                          speed
+                                                          color
                                                         });
                               break;
                         case 0:
@@ -24,36 +18,48 @@ function ServerPlanet ({  id, name, color, virusID, x = 300, y = 300, width = 16
                                   id,
                                   name,
                                   color,
-                                  x,
-                                  y,
-                                  width,
-                                  height,
-                                  speed
+                                  speed: 60,
+                                  agility: 60,
+                                  strength: 90
                               });
                         case 1:
                               return Virus.create({
                                   id,
                                   name,
                                   color,
-                                  x,
-                                  y,
-                                  width,
-                                  height,
-                                  speed
+                                  speed: 90,
+                                  agility: 60,
+                                  strength: 60
                               });
 
-                          break;
-                      default:
+                        case 2:
                               return Virus.create({
                                   id,
                                   name,
                                   color,
-                                  x,
-                                  y,
-                                  width,
-                                  height,
-                                  speed
+                                  speed: 60,
+                                  agility: 90,
+                                  strength: 60
                               });
+
+                        case 3:
+                              return Virus.create({
+                                  id,
+                                  name,
+                                  color,
+                                  speed: 70,
+                                  agility: 70,
+                                  strength: 70
+                              });
+                      default:
+                        return Virus.create({
+                            id,
+                            name,
+                            color,
+                            speed: 70,
+                            agility: 70,
+                            strength: 70
+                        });
     }
 }
 
