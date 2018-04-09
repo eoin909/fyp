@@ -15,20 +15,25 @@ function Client ({ socket, name }) {
     let teamId = null;
 
     function emit (event, data) {
+      if(!ai){
         socket.emit(event, data);
+      }
     }
 
     function on (event, listener) {
+      if(!ai){
         socket.on(event, listener);
+      }
     }
 
     function send (message) {
+      if(!ai){
         socket.send(message);
+      }
     }
 
     function setTeam(team) {
       teamId=team;
-      console.log("team " + teamId);
     }
 
     function getTeam() {
@@ -71,7 +76,11 @@ function Client ({ socket, name }) {
       map = value;
     }
     function getReady() {
-      return ready;
+      if(!ai){
+        return ready;
+      } else {
+        return true;
+      }
     }
 
     function setReady(boo) {

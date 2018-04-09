@@ -22,29 +22,11 @@ const {
  * A simple table demonstrating the hierarchy of the `Table` component and its sub-components.
  */
  class TableExample extends React.Component {
-   constructor (props) {
-       super(props);
-
-       this.state = {
-           columns: ["Rank","UserName","Highscore"],
-           records:[
-             {"UserName":"damian404","Highscore":830,"Rank":1},
-             {"UserName":"gary123","Highscore":455,"Rank":2},
-             {"UserName":"david868","Highscore":400,"Rank":3},
-             {"UserName":"jason","Highscore":350,"Rank":4},
-             {"UserName":"edel568","Highscore":200,"Rank":5},
-             {"UserName":"Eoin909","Highscore":0,"Rank":6},
-             {"UserName":"eoin909","Highscore":0,"Rank":7},
-             {"UserName":"eoin989","Highscore":0,"Rank":8}]
-       };
-   }
-
-
 
    render() {
        // Data
-       var dataColumns = this.state.columns;
-       var dataRows = this.state.records;
+       var dataColumns = this.props.columns;
+       var dataRows = this.props.records;
 
        var tableHeaders = (<thead class="blue-grey lighten-4" >
              <tr>
@@ -66,6 +48,11 @@ const {
            {tableBody}
          </table>) }
 
+};
+
+TableExample.propTypes = {
+  columns: React.PropTypes.string,
+  records: React.PropTypes.string
 };
 
 module.exports = TableExample;

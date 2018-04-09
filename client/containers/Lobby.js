@@ -18,21 +18,12 @@ class Lobby extends React.Component {
         super(props);
 
         this.state = {
-            // socket: null,
             user: null,
             rooms: [],
             currentRoomId: null,
+            clientId: null,
             gameClient: null,
-            leaderBoard:false,
-            columns: ["Rank","UserName","highscore"],
-            records:[
-              {"username":"damian404","highscore":830,"rank":1},
-              {"username":"gary123","highscore":455,"rank":2},
-              {"username":"david868","highscore":400,"rank":3},
-              {"username":"jason","highscore":350,"rank":4},
-              {"username":"edel568","highscore":200,"rank":5},
-              {"username":"Eoin909","highscore":0,"rank":6}
-            ]
+            leaderBoard:false
         };
     }
 
@@ -40,13 +31,11 @@ class Lobby extends React.Component {
         const socket = new SocketClient(this.props.serverUrl);
 
         socket.on('connect_error', () => {
-            console.log("server error");
             this.props.onLobbyError('Error connecting to server.');
             socket.close();
         });
 
         socket.on('connect', () => {
-          console.log("connect");
             socket.on('onConnected', (data) => {
                 const gameClient = ClientGame.create({
                     options: this.props.gameSettings
@@ -70,7 +59,6 @@ class Lobby extends React.Component {
             });
 
             socket.on('leaderBoard', (data) => {
-              console.log(JSON.stringify(data));
                 this.setState({
                     columns: data.columns,
                     records: data.records,
@@ -79,9 +67,9 @@ class Lobby extends React.Component {
             });
 
             socket.on('roomCreated', (data) => {
-              console.log(data);
                 this.setState({
-                    rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
+                    rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
+                    clientId: data.clientId
                 });
             });
 
@@ -94,14 +82,14 @@ class Lobby extends React.Component {
             socket.on('onJoinedRoom', (data) => {
                 this.setState({
                     rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
-                    currentRoomId: data.room.id
+                    currentRoomId: data.room.id,
+                    clientId: data.clientId
                 });
             });
 
             socket.on('onReadyClient', (data) => {
-
                 this.setState({
-                  rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
+                  rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
                 });
             });
 
@@ -139,16 +127,7 @@ class Lobby extends React.Component {
         }
     }
 
-
-
-
     onVirusSelect (data) {
-      console.log("here cunt");
-      console.log("virus " +  data.virus);
-      // this.setState({
-      //   virus: data.virus
-      // });
-
       if (this.state.socket) {
           this.state.socket.emit('setClientVirus', {virus: data.virus} );
       }
@@ -172,15 +151,11 @@ class Lobby extends React.Component {
     }
 
     onMapSelect (data) {
-      console.log("here cunt");
-      console.log("map " + data.map);
-      // this.setState({
-      //   virus: data.map
-      // });
       if (this.state.socket) {
           this.state.socket.emit('setClientMap', {map: data.map} );
       }
     }
+
     onLeaveRoom (roomId) {
         if (this.state.socket) {
             this.state.socket.emit('leaveRoom', { roomId: roomId });
@@ -194,7 +169,6 @@ class Lobby extends React.Component {
     }
 
     onCreateRoom (data) {
-      console.log("create " + data);
         if (this.state.socket) {
             this.state.socket.emit('createRoom', data);
         }
@@ -238,7 +212,10 @@ class Lobby extends React.Component {
                       </div>
                   </div>
                 {this.state.leaderBoard ? (
-                  <Table/>
+                  <Table
+                    columns={ this.state.columns }
+                    records={ this.state.records }
+                  />
                 ):(
                 <div className="columns">
                     <div className="one-fourth column">
@@ -250,6 +227,7 @@ class Lobby extends React.Component {
                           onRoomLeaveClick={ this.onLeaveRoom.bind(this) }
                           onReadyClick = { this.onReadyRoom.bind(this) }
                           currentRoomId={ this.state.currentRoomId }
+                          clientId={ this.state.clientId }
                         />
                     </div>
                     <div className="three-fourths column">

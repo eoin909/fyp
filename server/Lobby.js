@@ -23,7 +23,8 @@ function Lobby ({ config }) {
         const room = Room.create({
             owner: client,
             game: ServerGame.create({ options: config }),
-            gameMode
+            gameMode,
+            deleteRoom: endGame
         });
 
         rooms.set(room.getId(), room);
@@ -46,7 +47,8 @@ function Lobby ({ config }) {
 
         if (room) {
             // stop the game updates immediate
-            room.endGame();
+            if(room.isGameStarted())
+              room.endGame();
 
             for (const lobbyClient of clients.values()) {
                 lobbyClient.emit('roomDeleted', { roomId });
@@ -102,9 +104,7 @@ function Lobby ({ config }) {
             if (room && !room.isGameStarted()) {
 
                 client.setTeam(data.team);
-            //if (room && !client.isInRoom()) {
                 room.join(client);
-              //  room.joinTeam(client);
                 client.setCurrentRoom(room);
 
                 room.emit('onJoinedRoom', { room: room.toJSON() });
@@ -123,12 +123,12 @@ function Lobby ({ config }) {
                   let dataRecorsArray = rankDB();
                   console.log("size " + dataRecorsArray.length);
                   let recordData =  {
-                          columns: ['Rank', 'UserName', 'highscore'],
+                          columns: ['Rank', 'UserName', 'Highscore'],
                           records: dataRecorsArray.map(record => {
                           return {
-                              username: record.username,
-                              highscore: record.highscore ,
-                              rank: findUserRank(record.username, dataRecorsArray)
+                              UserName: record.username,
+                              Highscore: record.highscore ,
+                              Rank: findUserRank(record.username, dataRecorsArray)
                               //,winner: client.getWinner()
                           };
                       })
@@ -142,13 +142,13 @@ function Lobby ({ config }) {
         });
 
         client.on('setClientMap', (data) => {
-          console.log(data.map);
+        //  console.log(data.map);
 
           client.setMap(data.map)
         });
 
         client.on('setClientVirus', (data) => {
-          console.log(data.virus);
+        //  console.log(data.virus);
 
           client.setVirus(data.virus);
         });
@@ -173,9 +173,8 @@ function Lobby ({ config }) {
                           for (var i = 0; i < doc.length; i++) {
                             updateDataBase(doc[i]);
                           }
+                          startGame(room);
                         });
-
-                    startGame(room);
                   };
                 }
                 log('client joined room');
@@ -196,8 +195,8 @@ function Lobby ({ config }) {
                 client.emit('onLeftRoom', { room: room.toJSON() });
                 room.emit('playerLeftRoom', { room: room.toJSON() });
 
-                if(room.isGameStarted() && room.getSize() === 1){
-                  //endGame(room.getId());
+                if(room.isGameStarted() && room.getNonAISize() === 0){
+                  endGame(room.getId());
                   //client.emit('onLeftRoom', { room: room.toJSON() });
                 }
             }
@@ -259,8 +258,6 @@ function Lobby ({ config }) {
     }
 
     function rankDB() {
-      console.log("rank");
-      console.log(dataBase.size);
       var db = [];
       for (const record of dataBase.values()) {
         db.push(record);
@@ -268,10 +265,7 @@ function Lobby ({ config }) {
       db.sort(function(a, b) {
         return b.highscore -  a.highscore;
       });
-      console.log("return");
       return db;
-      //   console.log(db);
-      // console.log(findUserRank("gary123" , db) + " out of " + db.length) ;
     }
     function updateDataBase (doc) {
       dataBase.set(doc.username, doc);

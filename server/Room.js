@@ -6,12 +6,12 @@ const Virus = require('./ServerVirus');
 const debug = require('debug');
 const log = debug('game:server/Room');
 const CellMap = require('./CellMap.js');
-const AI = require('./ServerAI');
+const Client = require('./Client');
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/LeaderBoard');
 
-function Room ({ owner, game, gameMode}) {
+function Room ({ owner, game, gameMode, deleteRoom}) {
     const id = uuid.v4();
     const clients = new Set();
     const team1 = new Map();
@@ -134,7 +134,7 @@ function Room ({ owner, game, gameMode}) {
     function startGame (room, dbArray) {
         db = dbArray;
         let choice = tallyVotes();
-
+        console.log("db " + db.length);
         let map = CellMap.create({num:choice});
         game.addPlanets(map);
 
@@ -155,7 +155,7 @@ function Room ({ owner, game, gameMode}) {
             //game.getNetwork().addClientPlanet(client, virus);
         }
 
-        for (var i=0; i < (4-clients.size); i++){
+        while ( clients.size < 4 ){
           let color =  it.next().value;
           let serverVirus = getAIClient(color);
           game.addServerVirus(serverVirus);
@@ -177,12 +177,13 @@ function Room ({ owner, game, gameMode}) {
 
     function endGame () {
         if (game) {
-          //  let winnerId = game.getWinner();
-
             game.stop();
         }
 
         clients.clear();
+        team1.clear();
+        team2.clear();
+        deleteRoom(id);
     }
 
     function winner(id) {
@@ -218,13 +219,89 @@ function Room ({ owner, game, gameMode}) {
           }
       }
 
-      winnerScore = Math.floor(winnerScore/Math.sqrt(winnerRank))
-      User.updateHighScore(
-                            new User({
-                              username: winner,
-                              highscore: winnerScore
-                            })
-                          );
+      if(!winner.isAI()) {
+        winnerScore = Math.floor(winnerScore/Math.sqrt(winnerRank))
+        User.updateHighScore(
+                              new User({
+                                username: winner,
+                                highscore: winnerScore
+                              })
+                            );
+      }
+
+      endGame();
+    }
+
+    function winnerTeam(team) {
+      let winningTeamRank = null;
+      let winningTeam = null;
+      let losingTeamRank = null;
+      let losingTeam = null;
+      console.log("db " + db.length);
+
+      if ('Team 1' === team){
+        winningTeam = team1;
+        losingTeam = team2;
+      }else {
+        winningTeam = team2;
+        losingTeam = team1;
+      }
+
+      for (const player of winningTeam.values()) {
+        if(player.isAI()){
+          winningTeamRank += (db.lenght)/2
+          console.log("(db.lenght)/2 " + (db.lenght)/2 );
+        }
+        else {
+          winningTeamRank += findUserRank(player.getName());
+          console.log("rank " + findUserRank(player.getName()));
+          console.log("name " + player.getName());
+        }
+      }
+      winningTeamRank = winningTeamRank/(winningTeam.size);
+
+      console.log("winningTeamRank " + winningTeamRank);
+
+      for (const player of losingTeam.values()) {
+        if(player.isAI()){
+          losingTeamRank += (db.lenght)/2
+        } else {
+          losingTeamRank += findUserRank(player.getName());
+        }
+      }
+      losingTeamRank = losingTeamRank/(losingTeam.size);
+
+      console.log("losingTeamRank " + losingTeamRank);
+
+
+
+      let winnerTeamScore = Math.floor((Math.sqrt(losingTeamRank)*db.length*10)/Math.sqrt(winningTeamRank));
+
+      let losingTeamScore = Math.floor((Math.sqrt(winningTeamRank)*db.length)/Math.sqrt(losingTeamRank));
+
+
+      for (const  player of winningTeam.values()) {
+        if(!player.isAI()){
+          User.updateHighScore(
+                                new User({
+                                  username: player.getName(),
+                                  highscore: winnerTeamScore
+                                })
+                              );
+        }
+      }
+
+      for (const player of losingTeam.values()) {
+        if(!player.isAI()){
+          User.updateHighScore(
+                                new User({
+                                  username: player.getName(),
+                                  highscore: losingTeamScore
+                                })
+                              );
+        }
+      }
+
       endGame();
     }
 
@@ -245,59 +322,6 @@ function Room ({ owner, game, gameMode}) {
         }
       }
       return name;
-    }
-
-    function toJSON () {
-      if (gameMode === 'Teams'){
-        console.log(team1);
-        return {
-            id,
-            isGameStarted: game.isStarted(),
-            gameMode,
-            teams:[
-                    {
-                      team:'Team 1',
-                      clients: (team1.size > 0 ) ? (Array.from(team1.values()).map(client => {
-                          return {
-                              id: client.getId(),
-                              name: client.getName(),
-                              ready: client.getReady(),
-                              color: client.getColor()
-                              //,winner: client.getWinner()
-                          };
-                        })) : []
-                    },
-                    {
-                      team:'Team 2',
-                      clients:  (team2.size > 0 ) ? (Array.from(team2.values()).map(client => {
-                          return {
-                              id: client.getId(),
-                              name: client.getName(),
-                              ready: client.getReady(),
-                              color: client.getColor()
-                              //,winner: client.getWinner()
-                          };
-                        })) : []
-                      }
-                  ]
-      };
-    }else {
-
-        return {
-            id,
-            isGameStarted: game.isStarted(),
-            gameMode,
-            clients: Array.from(clients).map(client => {
-                return {
-                    id: client.getId(),
-                    name: client.getName(),
-                    ready: client.getReady(),
-                    color: client.getColor()
-                    //,winner: client.getWinner()
-                };
-            })
-        };
-      }
     }
 
     function findUserRank (name) {
@@ -335,27 +359,117 @@ function Room ({ owner, game, gameMode}) {
     }
 
   function getAIClient (color) {
-    let client = AI.create({
+    const client = Client.create({
         name: getName(),
-    });
+        socket:null
+   });
+
+    client.setAI(true);
     client.setColor(color);
     clients.add(client);
+
+    //balance teams
+    if (gameMode === 'Teams'){
+      if(team1.size < 2){
+        team1.set(client.getId(), client);
+      } else if (team2.size < 2) {
+        team2.set(client.getId(), client);
+      }
+    }
 
     const virus = Virus.create({
         id: client.getId(),
         name: client.getName(),
         color,
-        virusID: 0
+        virusID: 20
     });
 
     return virus;
   }
+
+  function getGameMode() {
+    return gameMode;
+  }
+
+  function getTeams(){
+    let array = [];
+    array.push(team1);
+    array.push(team2)
+    return array;
+  }
+
+  function getNonAISize() {
+    let counter = 0;
+
+    for (const client of clients.values()) {
+      if (!client.isAI()) {
+        counter++;
+      }
+    }
+    return counter;
+  }
+
+  function toJSON () {
+    if (gameMode === 'Teams'){
+      return {
+          id,
+          isGameStarted: game.isStarted(),
+          gameMode,
+          teams:[
+                  {
+                    team:'Team 1',
+                    clients: (team1.size > 0 ) ? (Array.from(team1.values()).map(client => {
+                        return {
+                            id: client.getId(),
+                            name: client.getName(),
+                            ready: client.getReady(),
+                            color: client.getColor()
+                            //,winner: client.getWinner()
+                        };
+                      })) : []
+                  },
+                  {
+                    team:'Team 2',
+                    clients:  (team2.size > 0 ) ? (Array.from(team2.values()).map(client => {
+                        return {
+                            id: client.getId(),
+                            name: client.getName(),
+                            ready: client.getReady(),
+                            color: client.getColor()
+                            //,winner: client.getWinner()
+                        };
+                      })) : []
+                    }
+                ]
+    };
+  }else {
+
+      return {
+          id,
+          isGameStarted: game.isStarted(),
+          gameMode,
+          clients: Array.from(clients).map(client => {
+              return {
+                  id: client.getId(),
+                  name: client.getName(),
+                  ready: client.getReady(),
+                  color: client.getColor()
+                  //,winner: client.getWinner()
+              };
+          })
+      };
+    }
+  }
+
     join(owner);
 
     return Object.freeze({
         getId,
         getOwner,
         checkReady,
+        getGameMode,
+        winnerTeam,
+        getTeams,
         getSize,
         isGameStarted,
         send,
@@ -365,6 +479,7 @@ function Room ({ owner, game, gameMode}) {
         leave,
         startGame,
         winner,
+        getNonAISize,
         endGame,
         toJSON
     });

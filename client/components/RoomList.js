@@ -7,12 +7,22 @@ class RoomList extends React.Component {
 
   getJoinTeamButton(data){
 
-console.log(typeof data);
-    console.log(data);
-    console.log(this.state);
-    console.log(this.props);
-    console.log(this);
-    if (Object.keys(data.clients).length < 2){
+    let isReady = false;
+    let inRoom = null;
+    for (var k = 0; k < Object.keys(this.props.rooms).length; k++) {
+      if(this.props.rooms[k].id === this.props.currentRoomId){
+        for (var j = 0; j < Object.keys(this.props.rooms[k].teams).length; j++) {
+          for (var i = 0; i < Object.keys(this.props.rooms[k].teams[j].clients).length; i++) {
+            if (this.props.rooms[k].teams[j].clients[i].id === this.props.clientId){
+              inRoom=this.props.rooms[k].teams[j].team;
+              isReady = this.props.rooms[k].teams[j].clients[i].ready
+            }
+          }
+        }
+      }
+    }
+
+    if (Object.keys(data.clients).length < 2 && !isReady && inRoom !== data.team){
       return (
         <button className="btn btn-sm btn-primary menu-btn"
           onClick={ this.props.onJoinTeam.bind(this, {roomId:this.props.currentRoomId, team: data.team}) } >
@@ -205,7 +215,8 @@ RoomList.propTypes = {
     onReadyClick: React.PropTypes.func.isRequired,
     onRoomCreateClick: React.PropTypes.func.isRequired,
     onRoomLeaveClick: React.PropTypes.func.isRequired,
-    currentRoomId: React.PropTypes.string
+    currentRoomId: React.PropTypes.string,
+    clientId: React.PropTypes.string
 };
 
 module.exports = RoomList;

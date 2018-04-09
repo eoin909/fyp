@@ -40,28 +40,35 @@ class MapSelect extends React.Component {
           	<div>
           		<form className="form-checkbox">
           		<div >
+
                 <div >
-                  <label >
-                    <img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Basketball.png" alt="..." className="img-class"/>
+                  <label className="mapDisplay">
                     <input type="radio" name="chk1" className="hidden" onClick={this.props.setMap.bind(this, {map:1})} value="val2" autoComplete="off"/>
+                    <img src="/Images/strength.jpg" alt="..." className="img-class"/>
                   </label>
                 </div>
+
                 <div>
-                  <label >
-                    <img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Football.png" alt="..." className="img-class" />
-                    <input type="radio" name="chk1" onClick={this.props.setMap.bind(this, {map:2})} value="val3"  autoComplete="off"/>
+                  <label className="mapDisplay">
+                    <input type="radio" name="chk1"  className="hidden" onClick={this.props.setMap.bind(this, {map:2})} value="val3"  autoComplete="off"/>
+                    <img src=".strength.png" alt="..." className="img-class"/>
                   </label>
                 </div>
 
                 <div >
-                  <label >
+                  <label className="mapDisplay">
+                    <input type="radio" name="chk1" className="hidden"  onClick={this.props.setMap.bind(this, {map:3})} value="val4" autoComplete="off"/>
                     <img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Soccer.png" alt="..."/>
-                    <input type="radio" name="chk1"  onClick={this.props.setMap.bind(this, {map:3})} value="val4" autoComplete="off"/>
                   </label>
                 </div>
+
                 <div >
-                <label ><img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Soccer.png" alt="..." />
-                <input type="radio" name="chk1"  onClick={this.props.setMap.bind(this, {map:4})} value="val4"  autoComplete="off"/></label></div>
+                  <label className="mapDisplay">
+                    <input type="radio" name="chk1" className="hidden" onClick={this.props.setMap.bind(this, {map:4})} value="val4"  autoComplete="off"/>
+                    <img src="http://content.nike.com/content/dam/one-nike/globalAssets/menu_header_images/OneNike_Global_Nav_Icons_Soccer.png" alt="..." />
+                  </label>
+                </div>
+
               </div>
           		<div >
             </div>
