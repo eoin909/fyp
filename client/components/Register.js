@@ -34,6 +34,7 @@ class Login extends React.Component {
         return (
 
                 <div className="login-page">
+                {this.props.failReason ? (<span className="login-error centered">Username Already Exists</span>):(null)}
 
                     <form
                         className="form"
@@ -108,7 +109,8 @@ class Login extends React.Component {
 
 Login.propTypes = {
     registerUser: React.PropTypes.func.isRequired,
-    changePage: React.PropTypes.func.isRequired
+    changePage: React.PropTypes.func.isRequired,
+    failReason: React.PropTypes.string
 };
 
 module.exports = Login;

@@ -101,7 +101,7 @@ class Lobby extends React.Component {
             });
 
             socket.on('onStartClientGame', (data) => {
-
+              console.log(data);
                 this.setState({
                   isGameStarted: true,
                   rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
@@ -112,7 +112,8 @@ class Lobby extends React.Component {
 
               this.setState({
                   isGameStarted: false,
-                  currentRoomId: null
+                  currentRoomId: null,
+                  color:null
               });
             });
 

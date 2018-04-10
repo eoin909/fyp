@@ -5,63 +5,63 @@ const React = require('react');
 
 class RoomList extends React.Component {
 
-  getJoinTeamButton(data){
+    getJoinTeamButton(data){
 
-    let isReady = false;
-    let inRoom = null;
-    for (var k = 0; k < Object.keys(this.props.rooms).length; k++) {
-      if(this.props.rooms[k].id === this.props.currentRoomId){
-        for (var j = 0; j < Object.keys(this.props.rooms[k].teams).length; j++) {
-          for (var i = 0; i < Object.keys(this.props.rooms[k].teams[j].clients).length; i++) {
-            if (this.props.rooms[k].teams[j].clients[i].id === this.props.clientId){
-              inRoom=this.props.rooms[k].teams[j].team;
-              isReady = this.props.rooms[k].teams[j].clients[i].ready
+      let isReady = false;
+      let inRoom = null;
+      for (var k = 0; k < Object.keys(this.props.rooms).length; k++) {
+        if(this.props.rooms[k].id === this.props.currentRoomId){
+          for (var j = 0; j < Object.keys(this.props.rooms[k].teams).length; j++) {
+            for (var i = 0; i < Object.keys(this.props.rooms[k].teams[j].clients).length; i++) {
+              if (this.props.rooms[k].teams[j].clients[i].id === this.props.clientId){
+                inRoom=this.props.rooms[k].teams[j].team;
+                isReady = this.props.rooms[k].teams[j].clients[i].ready
+              }
             }
           }
         }
       }
+
+      if (Object.keys(data.clients).length < 2 && !isReady && inRoom !== data.team){
+        return (
+          <button className="btn btn-sm btn-primary menu-btn"
+            onClick={ this.props.onJoinTeam.bind(this, {roomId:this.props.currentRoomId, team: data.team}) } >
+            Join Team
+          </button>
+        ) ;
+      } else {
+        return (
+          null
+        );
+      }
     }
 
-    if (Object.keys(data.clients).length < 2 && !isReady && inRoom !== data.team){
+    getButton (data){
+      if(data.ready ===false){
       return (
-        <button className="btn btn-sm btn-primary menu-btn"
-          onClick={ this.props.onJoinTeam.bind(this, {roomId:this.props.currentRoomId, team: data.team}) } >
-          Join Team
+        <button className="btn btn-sm btn-danger menu-btn"
+          onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
+          Ready Up
         </button>
-      ) ;
-    } else {
-      return (
-        null
       );
+      }
+      else if (data.ready === true && data.color === null) {
+        return (
+          <button
+              className="btn btn-sm btn-primary menu-btn">
+            Ready
+          </button>
+        );
+      }
+      else {
+        return (
+          <button
+            className="circle menu-btn"
+            style={{backgroundColor: data.color}}  >
+          </button>
+        );
+      }
     }
-  }
-
-  getButton (data){
-    if(data.ready ===false){
-    return (
-      <button className="btn btn-sm btn-danger menu-btn"
-        onClick={ this.props.onReadyClick.bind(this, this.props.currentRoomId) } >
-        Ready Up
-      </button>
-    );
-  }
-  else if (data.ready === true && data.color === null) {
-    return (
-      <button
-          className="btn btn-sm btn-primary menu-btn">
-        Ready
-      </button>
-    );
-  }
-  else {
-    return (
-      <button
-        className="circle menu-btn"
-        style={{backgroundColor: data.color}}  >
-      </button>
-    );
-  }
-}
 
     render () {
         return (

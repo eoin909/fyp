@@ -28,6 +28,7 @@ class Login extends React.Component {
         return (
 
                 <div className="login-page">
+                {this.props.failReason ? (<span className="login-error centered">Incorrect username or password.</span>):(null)}
 
                     <form
                         className="form"
@@ -38,6 +39,7 @@ class Login extends React.Component {
                         } }
                     >
                         <dl className="form-group">
+
                             <dd>
                                 <input
                                     placeholder="Enter Username"
@@ -86,7 +88,7 @@ class Login extends React.Component {
                             <input
                                 className="btn btn-primary"
                                 type="submit"
-                                value="login"
+                                value="Sign in"
                             />
                         </div>
                         <p class="message">Not registered?
@@ -102,8 +104,8 @@ class Login extends React.Component {
 
 Login.propTypes = {
     submitHandler: React.PropTypes.func.isRequired,
-    changePage: React.PropTypes.func.isRequired
-  //pageDirector: React.PropTypes.func.isRequired
+    changePage: React.PropTypes.func.isRequired,
+    failReason: React.PropTypes.string
 };
 
 module.exports = Login;

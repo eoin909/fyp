@@ -1,22 +1,17 @@
 {
-  "name": "realtime-multiplayer-in-html5",
+  "name": "realtime-multiplayer",
   "version": "0.1.1",
   "description": "Realtime multiplayer in the browser",
-  "author": "Arjan Frans <arjanfrans.com@gmail.com>",
+  "author": "Eoin Reilly>",
   "scripts": {
     "start": "nodemon ./server/index.js",
     "client": "webpack-dev-server --colors",
     "deploy": "./deploy.sh",
-    "build": "NODE_ENV=production webpack",
+    "start run:dev":"node ./server/index.js && webpack-dev-server --colors",
+    "build": "SET NODE_ENV=production webpack",
     "lint": "eslint lib"
   },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/arjanfrans/realtime-multiplayer-in-html5"
-  },
   "dependencies": {
-    "@arjanfrans/mainloop": "^2.0.0",
     "bcryptjs": "^2.4.3",
     "debug": "^2.2.0",
     "express": "^4.16.2",

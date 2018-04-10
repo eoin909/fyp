@@ -7,8 +7,8 @@ const debug = require('debug');
 const log = debug('game:server/server');
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
-// mongoose.connect('mongodb://localhost:27017/LeaderBoard');
-mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
+ mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+//mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
 function Lobby ({ config }) {
     const rooms = new Map();
     const clients = new Map();

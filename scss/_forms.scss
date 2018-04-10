@@ -283,6 +283,19 @@ input::-webkit-inner-spin-button {
   padding: 8% 0 0;
   margin: auto;
 }
+.login-error {
+  background-color:#ffdce0;
+  padding: 15px 20px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  font-size: 13px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  color: #86181d;
+  text-align: center;
+}
+
 .form {
   position: relative;
   z-index: 1;

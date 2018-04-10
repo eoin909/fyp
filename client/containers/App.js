@@ -27,6 +27,7 @@ class App extends React.Component {
             this.state = {
                 loggedIn: false,
                 serverUrl: null,
+                failReason: null,
                 name: null,
                 lobbyError: null,
                 gameSettings: Object.assign({}, gameConfig, clientConfig),
@@ -49,11 +50,9 @@ class App extends React.Component {
 
 
     socket.on("there to fuck", (data) => {
-      console.log("fuck you ya nosey bastard");
     });
 
     socket.on("LogIn", (data) => {
-      console.log("LogIn");
       this.setState({
           loggedIn: true,
           serverUrl: data.server,
@@ -66,20 +65,21 @@ class App extends React.Component {
     });
 
     socket.on("failedLogIn", (data) => {
-      console.log("failure");
       this.setState({
           loggedIn: false,
           serverUrl: data.server,
           name: data.name,
           password: '',
           lobbyError: null,
-          logInFailure:true
+          logInFailure:true,
+          failReason: data.reason
+
       });
     });
 
     socket.on("failedRegister", (data) => {
-      console.log("failure");
       this.setState({
+          failReason: data.reason,
           loggedIn: false,
           serverUrl: '',
           name: '',
@@ -90,8 +90,8 @@ class App extends React.Component {
     });
 
     socket.on("RegisterSucess", (data) => {
-      console.log("LogIn");
       this.setState({
+        failReason:null,
           loggedIn: false,
           serverUrl: '',
           name: data.name,
@@ -150,8 +150,8 @@ class App extends React.Component {
     }
 
     changePage (){
-      console.log("click do");
       this.setState({
+          failReason: null,
           register: !this.state.register
       });
     }
@@ -193,12 +193,16 @@ class App extends React.Component {
                         <Register
                             registerUser={ this.registerUser.bind(this) }
                             changePage= { this.changePage.bind(this) }
+                            failReason={ this.state.failReason }
+
                         />
                       ) : (
 
                         <Login
                             submitHandler={ this.onLogin.bind(this) }
                             changePage= { this.changePage.bind(this) }
+                            failReason={ this.state.failReason }
+
                         />
 
                       )

@@ -13,8 +13,8 @@ const log = debug('game:server/index');
 
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost:27017/LeaderBoard');
-mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
+mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+//mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
 
 function start () {
     const config = Object.assign({}, gameConfig, serverConfig);
@@ -62,14 +62,18 @@ function start () {
 
           User.getUserByUsername( data.name, function (err, post) {
             if (err) return next(err);
-            User.comparePassword(data.password, post.password, function(err, isMatch){
-              if(err) throw err;
-              if(isMatch){
-                socket.emit("LogIn", data);
-              } else {
-                socket.emit("failedLogIn", data);
-              }
-            })
+            if (post!== null ) {
+              User.comparePassword(data.password, post.password, function(err, isMatch){
+                if(err) throw err;
+                if(isMatch){
+                  socket.emit("LogIn", data);
+                } else {
+                  socket.emit("failedLogIn", {reason: "incorrect"});
+                }
+              })
+            } else {
+              socket.emit("failedLogIn", {reason: "incorrect"});
+            }
           });
         });
 

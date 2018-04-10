@@ -37,7 +37,6 @@ function Client ({ socket, name }) {
     }
 
     function getTeam() {
-      console.log("team get " + teamId);
       return teamId;
     }
     function setCurrentRoom (room) {

@@ -8,8 +8,8 @@ const CellMap = require('./CellMap.js');
 const Client = require('./Client');
 const User = require('./Models/User.js');
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
-// mongoose.connect('mongodb://localhost:27017/LeaderBoard');
+//mongoose.connect('mongodb://mongodb3890re:di3dyx@danu7.it.nuigalway.ie:8717/mongodb3890');
+ mongoose.connect('mongodb://localhost:27017/LeaderBoard');
 
 function Room ({ owner, game, gameMode, deleteRoom}) {
     const id = uuid.v4();
@@ -111,6 +111,8 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     }
 
     function leave (client) {
+      client.setColor(null);
+      client.setReady(false);
       clients.delete(client);
         if (game.isStarted()) {
             for (const roomClient of clients) {
@@ -126,15 +128,12 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     function startGame (room, dbArray) {
       db = dbArray;
       let choice = tallyVotes();
-      console.log("MAP " + choice);
       let map = CellMap.create({num:choice});
       game.addPlanets(map);
 
       for (const client of clients) {
         let color =  it.next().value;
         client.setColor(color);
-        console.log("client.getname " + client.getName());
-        console.log("client.getVirus " + client.getVirus());
         const virus = Virus.create({
           id: client.getId(),
           name: client.getName(),
@@ -151,6 +150,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
         let serverVirus = getAIClient(color);
         game.addServerVirus(serverVirus);
       }
+      game.startServerGame(room);
 
       for (const client of clients) {
         if(!client.isAI()){
@@ -159,7 +159,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
         }
       }
       log('game started');
-      game.startServerGame(room);
     }
 
     function endGame () {

@@ -11,11 +11,6 @@ function ServerGame ({ options }) {
         interval: options.networkTimestep,
         onUpdate () {
             network.sendUpdates(game.getStateForPlanetSystem);
-          //  console.log(game.getStateForPlayer);
-            //console.log(JSON.stringify(game.getStateForPlayer));
-            //console.log("servergame update network");
-
-          //  game.clearEvents();
         }
     });
 
