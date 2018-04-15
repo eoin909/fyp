@@ -24,7 +24,7 @@ class Lobby extends React.Component {
             clientId: null,
             gameClient: null,
             leaderBoard:false
-        };
+          };
     }
 
     componentWillMount () {
@@ -68,9 +68,7 @@ class Lobby extends React.Component {
 
             socket.on('roomCreated', (data) => {
                 this.setState({
-                    rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
-                    clientId: data.clientId
-                });
+                    rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)                });
             });
 
             socket.on('roomDeleted', (data) => {
@@ -80,9 +78,18 @@ class Lobby extends React.Component {
             });
 
             socket.on('onJoinedRoom', (data) => {
+              console.log("onJoinRoom " + JSON.stringify(data));
                 this.setState({
                     rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
                     currentRoomId: data.room.id,
+                    clientId: data.clientId
+                });
+            });
+
+            socket.on('virusStateUpdate', (data) => {
+              //console.log("data " + JSON.stringify(data));
+                this.setState({
+                    rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room),
                     clientId: data.clientId
                 });
             });
@@ -124,6 +131,12 @@ class Lobby extends React.Component {
               });
             });
 
+            socket.on('returnVirusState', (data) => {
+
+              this.setState({
+                rooms: this.state.rooms.filter(room => room.id !== data.room.id).concat(data.room)
+              });
+            });
 
 
             socket.emit('register', {
@@ -138,7 +151,7 @@ class Lobby extends React.Component {
 
     onVirusSelect (data) {
       if (this.state.socket) {
-          this.state.socket.emit('setClientVirus', {virus: data.virus} );
+          this.state.socket.emit('setClientVirus', {virus: data.virus, roomId: this.state.currentRoomId} );
       }
     }
 
@@ -256,6 +269,9 @@ class Lobby extends React.Component {
                                               <div className="text-center">
                                                 <VirusSelect
                                                 setVirus={ this.onVirusSelect.bind(this) }
+                                                rooms={ this.state.rooms }
+                                                currentRoomId={ this.state.currentRoomId }
+                                                clientId={ this.state.clientId }
                                                 />
                                               </div>
                                             </div>

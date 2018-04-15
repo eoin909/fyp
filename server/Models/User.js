@@ -51,11 +51,10 @@ module.exports.updateHighScore = function(user){
 	  User.getUserByUsername(user.username, function (err, post) {
 		if (err) return next(err);
 		user.highscore = (post.highscore + user.highscore);
-		console.log("user.highscore " + user.highscore);
 		User.findOneAndUpdate(
 													{ username: user.username},
 			 										{ $set: {highscore: user.highscore} },
-			  									function(resp){console.log("done");	}
+			  									function(resp){	}
 												);
 	});
  }

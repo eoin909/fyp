@@ -67,13 +67,6 @@ function draw (ctx, planets) {
           ctx.strokeStyle= COLOR;
           ctx.arc(x,y, radius+5, 0, 2*Math.PI);
           ctx.stroke();
-        //  console.log("planet.getSelectedBy() " + planet.getSelectedBy());
-          // console.log("lineToArray " + lineToArray);
-          // console.log("lineToArray.length " + lineToArray.length);
-          //
-          // lineToArray[planet.getSelectedBy()] = planet;
-          //
-          // console.log("lineToArray.length " + lineToArray.length);
           let key = planet.getSelectedBy();
           if(key ==='target'){
             lineToMap.set(key, planet);
@@ -83,6 +76,7 @@ function draw (ctx, planets) {
           }
         }
       }
+
       let posX = 0
     //    console.log("bar.size " + bar.size);
       for (const key of bar.keys()) {

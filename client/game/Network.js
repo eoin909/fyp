@@ -1,6 +1,5 @@
 'use strict';
 
-const Player = require('./ClientPlayer');
 const Planet = require('./Planet');
 
 function Network ({ game, socket, pingTimeout }) {

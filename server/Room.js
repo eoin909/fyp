@@ -18,10 +18,11 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     const team2 = new Map();
 
     var colors = new Map();
-    colors.set( "red", '#FF0000');
-    colors.set( "Aqua",  '#00ffff');
-    colors.set( "pink", '#ff00ff');
-    colors.set("orange", "#f37a3e");
+    colors.set( 1, '#FF0000');
+    colors.set( 2, '#ff00ff');
+    colors.set( 3, '#00ffff');
+    colors.set( 4, "#f37a3e");
+
     colors.set( "green", '#33cc33');
     colors.set( "Tan",  '#00ffff');
     colors.set( "yellow", '#FFFF00');
@@ -50,6 +51,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       }
       return allReady;
     }
+
     function getSize () {
         return clients.size;
     }
@@ -132,12 +134,16 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       game.addPlanets(map);
 
       for (const client of clients) {
-        let color =  it.next().value;
-        client.setColor(color);
+      //  let color =  it.next().value;
+        if (client.getVirus() === 0){
+          let virusIndex = getNextAvil();
+          client.setVirus(virusIndex);
+        }
+        client.setColor(colors.get(client.getVirus()));
         const virus = Virus.create({
           id: client.getId(),
           name: client.getName(),
-          color,
+          color:colors.get(client.getVirus()),
           virusID: client.getVirus()
         });
 
@@ -146,8 +152,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       }
 
       while ( clients.size < 4 ){
-        let color =  it.next().value;
-        let serverVirus = getAIClient(color);
+        let serverVirus = getAIClient();
         game.addServerVirus(serverVirus);
       }
       game.startServerGame(room);
@@ -210,7 +215,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       }
 
       if(!winner.isAI()) {
-        winnerScore = Math.floor(winnerScore/Math.sqrt(winnerRank))
+        winnerScore = Math.floor(winnerScore*Math.sqrt(winnerRank));
         if (typeof winnerScore === 'number'){
           User.updateHighScore(
                                 new User({
@@ -256,7 +261,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       }
 
       losingTeamRank = losingTeamRank/(losingTeam.size);
-      let winnerTeamScore = Math.floor((Math.sqrt(losingTeamRank)*dataBaseLength*10)/Math.sqrt(winningTeamRank));
+      let winnerTeamScore = Math.floor((Math.sqrt(losingTeamRank)*dataBaseLength*10)*Math.sqrt(winningTeamRank));
       let losingTeamScore = -Math.floor((Math.sqrt(winningTeamRank)*dataBaseLength)/Math.sqrt(losingTeamRank));
 
       for (const  player of winningTeam.values()) {
@@ -335,14 +340,31 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     return (index[(Math.floor(Math.random()*index.length))]);
     }
 
-  function getAIClient (color) {
+    function getVirusAvail () {
+      let array = [];
+      for (const client of clients.values()) {
+        console.log("client.getVirus() " + client.getVirus());
+        array.push(client.getVirus());
+      }
+      console.log("array " + array);
+      return {
+        strength: array.includes(1),
+        speed: array.includes(2),
+        agility: array.includes(3),
+        balanced: array.includes(4)
+      }
+    }
+
+
+  function getAIClient () {
     const client = Client.create({
         name: getName(),
         socket:null
    });
-
+    let color = getNextAvil();
     client.setAI(true);
-    client.setColor(color);
+    client.setColor(colors.get(color));
+    client.setVirus(color);
     clients.add(client);
 
     //balance teams
@@ -356,7 +378,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     const virus = Virus.create({
         id: client.getId(),
         name: client.getName(),
-        color,
+        color:colors.get(color),
         virusID: 20
     });
     return virus;
@@ -384,12 +406,25 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     return counter;
   }
 
+  function getNextAvil () {
+    // let colorIndex = null;
+    let array = [];
+    for (const client of clients.values()) {
+      array.push(client.getVirus());
+    }
+    for (var i = 1; i < 5; i++) {
+      if(!array.includes(i)){
+        return i;
+      }
+    }
+  }
   function toJSON () {
     if ( gameMode === 'Teams' ){
       return {
           id,
           isGameStarted: game.isStarted(),
           gameMode,
+          virusState: getVirusAvail(),
           teams:[
                   {
                     team:'Team 1',
@@ -398,7 +433,8 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
                             id: client.getId(),
                             name: client.getName(),
                             ready: client.getReady(),
-                            color: client.getColor()
+                            color: client.getColor(),
+                            virus: client.getVirus()
                         };
                       })) : []
                   },
@@ -409,24 +445,27 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
                             id: client.getId(),
                             name: client.getName(),
                             ready: client.getReady(),
-                            color: client.getColor()
+                            color: client.getColor(),
+                            virus: client.getVirus()
                         };
                       })) : []
                     }
                 ]
     };
   } else {
-
+      console.log("print " + getVirusAvail());
       return {
           id,
           isGameStarted: game.isStarted(),
           gameMode,
+          virusState: getVirusAvail(),
           clients: Array.from(clients).map(client => {
               return {
                   id: client.getId(),
                   name: client.getName(),
                   ready: client.getReady(),
-                  color: client.getColor()
+                  color: client.getColor(),
+                  virus: client.getVirus()
               };
           })
       };

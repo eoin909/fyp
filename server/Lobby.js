@@ -30,7 +30,7 @@ function Lobby ({ config }) {
         rooms.set(room.getId(), room);
         client.setCurrentRoom(room);
 
-        client.emit('onJoinedRoom', { room: room.toJSON() });
+        client.emit('onJoinedRoom', { clientId: client.getId(), room: room.toJSON() });
 
         log('player ' + client.getId() + ' created a room with id ' + room.getId());
 
@@ -47,12 +47,16 @@ function Lobby ({ config }) {
             // stop the game updates immediate
             if(room.isGameStarted())
               room.endGame();
+
               room.emit("currentRoomDeleted", {roomId});
 
             for (const lobbyClient of clients.values()) {
+                lobbyClient.reset();
+
                 lobbyClient.emit('roomDeleted', { roomId });
                 lobbyClient.send('s.e');
             }
+            room.emit('playerLeftRoom', { room: room.toJSON() });
 
             rooms.delete(roomId);
 
@@ -80,7 +84,7 @@ function Lobby ({ config }) {
           if (room && !client.isInRoom() && !room.isGameStarted()) {
             room.join(client);
             client.setCurrentRoom(room);
-            room.emit('onJoinedRoom', { room: room.toJSON() });
+            room.emit('onJoinedRoom', { clientId: client.getId(), room: room.toJSON() });
             log('client joined room');
           }
         });
@@ -127,6 +131,9 @@ function Lobby ({ config }) {
 
         client.on('setClientVirus', (data) => {
           client.setVirus(data.virus);
+          console.log("data.roomId " + data.roomId);
+          const room = rooms.get(data.roomId);
+          room.emit('virusStateUpdate', { room: room.toJSON() });
         });
 
         client.on('readyRoom', (data) => {
@@ -161,6 +168,7 @@ function Lobby ({ config }) {
                 }
 
                 client.emit('onLeftRoom', { room: room.toJSON() });
+                client.reset();
                 room.emit('playerLeftRoom', { room: room.toJSON() });
 
                 if(room.isGameStarted() && room.getNonAISize() === 0){

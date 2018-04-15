@@ -2,7 +2,6 @@
 
 const InputHandler = require('./input');
 const AbstractGame = require('../../lib/AbstractGame');
-const Ghost = require('./ClientPlayer');
 const Bullet = require('../../lib/RenderBullet');
 function interpolate (p, n, interpolation) {
     interpolation = Math.max(0, Math.min(1, interpolation));
@@ -66,9 +65,6 @@ function ClientGame ({ options }) {
 
     function setLocalPlayer (player) {
         localPlayer = player;
-        console.log(localPlayer);
-
-        //console.log("calljlsdjfa   " + canvasPos);
         game.setLocalPlayerId(player);
     }
 
@@ -92,24 +88,11 @@ function ClientGame ({ options }) {
     }
 
     function updateInput () {
-
         inputHandler.setLocalPlayer(localPlayer);
         const input = inputHandler.getInput();
         if (input.length > 0 && localPlayer) {
-        //  console.log("input " + input);
-
-            // Update what sequence we are on now
             inputSeq += 1;
-
-            // game.pushInput({
-            //     inputs: input,
-            //     time: game.getTime(),
-            //     seq: inputSeq
-            // });
-
             if (network) {
-
-            //  console.log("sending data");
                 let data = '';
                 data += input + '.';
                 data += game.getTime().toString().replace('.', '-') + '.';
@@ -120,13 +103,8 @@ function ClientGame ({ options }) {
     }
 
     function processEventUpdates (data) {
-      // console.log(data);
-      // console.log(typeof data);
       const bullets = new Map();
         for (const eventData of data.events) {
-        //  console.log("color eventData " + eventData.bulletColor);
-        // console.log(" eventData x " + eventData.x);
-        // console.log(" eventData y " + eventData.y);
             const bullet = Bullet.create({
               x: eventData.x,
               y: eventData.y,
@@ -139,7 +117,6 @@ function ClientGame ({ options }) {
     }
 
     function clientPrediction () {
-    //  console.log("sljflsjf");
         if (serverUpdates.length <= 0) {
             return;
         }

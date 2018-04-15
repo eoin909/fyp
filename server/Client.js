@@ -64,7 +64,7 @@ function Client ({ socket, name }) {
     }
 
     function setVirus (value) {
-      virus=value;
+      virus = value;
     }
 
     function getMap() {
@@ -111,6 +111,16 @@ function Client ({ socket, name }) {
       return winner;
     }
 
+    function reset() {
+      currentRoom = null;
+      ready = false;
+      color = null;
+      ai = false;
+      winner = false;
+      map = 0;
+      virus = 0;
+      teamId = null;
+    }
     function toJSON () {
         return {
             currentRoom: currentRoom ? currentRoom.toJSON() : null,
@@ -143,6 +153,7 @@ function Client ({ socket, name }) {
         setColor,
         setWinner,
         getWinner,
+        reset,
         toJSON
     });
 }
