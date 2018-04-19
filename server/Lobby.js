@@ -45,18 +45,18 @@ function Lobby ({ config }) {
 
         if (room) {
             // stop the game updates immediate
-            if(room.isGameStarted())
+            if(room.isGameStarted()){
               room.endGame();
+            }
 
-              room.emit("currentRoomDeleted", {roomId});
-
+            room.emit("currentRoomDeleted", { roomId });
             for (const lobbyClient of clients.values()) {
                 lobbyClient.reset();
 
                 lobbyClient.emit('roomDeleted', { roomId });
                 lobbyClient.send('s.e');
             }
-            room.emit('playerLeftRoom', { room: room.toJSON() });
+          //  room.emit('playerLeftRoom', { room: room.toJSON() });
 
             rooms.delete(roomId);
 
@@ -120,7 +120,6 @@ function Lobby ({ config }) {
 
                    client.emit('leaderBoard', recordData );
                 }).catch(err => { // if error we will be here
-                    console.error('App starting error:', err.stack);
                     process.exit(1);
                 });
         });
@@ -131,7 +130,6 @@ function Lobby ({ config }) {
 
         client.on('setClientVirus', (data) => {
           client.setVirus(data.virus);
-          console.log("data.roomId " + data.roomId);
           const room = rooms.get(data.roomId);
           room.emit('virusStateUpdate', { room: room.toJSON() });
         });

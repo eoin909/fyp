@@ -8,8 +8,8 @@ class Login extends React.Component {
 
         this.state = {
             server: 'http://localhost:4004',
-            name: 'jason',
-            password: 'password',
+            name: '',
+            password: '',
             register: false
         };
     }

@@ -30,7 +30,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     let db = null;
     var it = colors.values();
 
-    let names = ["Damian", "Gary", "Jason", "Luke", "Michael", "Conor", "Lisa", "Laura", "Edel", "Jane", ] ;
+    let names = ["Luke", "Michael", "Conor", "Lisa", "Laura", "Edel", "Jane" ] ;
 
     function getId () {
         return id;
@@ -134,7 +134,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
       game.addPlanets(map);
 
       for (const client of clients) {
-      //  let color =  it.next().value;
         if (client.getVirus() === 0){
           let virusIndex = getNextAvil();
           client.setVirus(virusIndex);
@@ -170,11 +169,7 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
         if (game) {
             game.stop();
         }
-
-        clients.clear();
-        team1.clear();
-        team2.clear();
-        deleteRoom(id);
+      deleteRoom(id);
     }
 
     function winner(id) {
@@ -343,10 +338,8 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     function getVirusAvail () {
       let array = [];
       for (const client of clients.values()) {
-        console.log("client.getVirus() " + client.getVirus());
         array.push(client.getVirus());
       }
-      console.log("array " + array);
       return {
         strength: array.includes(1),
         speed: array.includes(2),
@@ -453,7 +446,6 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
                 ]
     };
   } else {
-      console.log("print " + getVirusAvail());
       return {
           id,
           isGameStarted: game.isStarted(),

@@ -38,80 +38,70 @@ class App extends React.Component {
 
 
   componentWillMount () {
-
-
     const socket = new SocketClient('http://localhost:4004');
-
     this.state = {
         socket: socket
     };
 
-      socket.on('connect', () => {
+    socket.on('connect', () => {
 
-
-    socket.on("there to fuck", (data) => {
-    });
-
-    socket.on("LogIn", (data) => {
-      this.setState({
-          loggedIn: true,
-          serverUrl: data.server,
-          name: data.name,
-          password: data.password,
-          lobbyError: null,
-          gameSettings: Object.assign({}, gameConfig, clientConfig)
+      socket.on("LogIn", (data) => {
+        this.setState({
+            loggedIn: true,
+            serverUrl: data.server,
+            name: data.name,
+            password: data.password,
+            lobbyError: null,
+            gameSettings: Object.assign({}, gameConfig, clientConfig)
+        });
       });
-      socket.close();
-    });
 
-    socket.on("failedLogIn", (data) => {
-      this.setState({
-          loggedIn: false,
-          serverUrl: data.server,
-          name: data.name,
-          password: '',
-          lobbyError: null,
-          logInFailure:true,
-          failReason: data.reason
+      socket.on("failedLogIn", (data) => {
+        this.setState({
+            loggedIn: false,
+            serverUrl: data.server,
+            name: data.name,
+            password: '',
+            lobbyError: null,
+            logInFailure:true,
+            failReason: data.reason
 
+        });
       });
-    });
 
-    socket.on("failedRegister", (data) => {
-      this.setState({
-          failReason: data.reason,
-          loggedIn: false,
-          serverUrl: '',
-          name: '',
-          password: '',
-          lobbyError: null,
-          logInRegister: true
+      socket.on("failedRegister", (data) => {
+        this.setState({
+            failReason: data.reason,
+            loggedIn: false,
+            serverUrl: '',
+            name: '',
+            password: '',
+            lobbyError: null,
+            logInRegister: true
+        });
       });
-    });
 
-    socket.on("RegisterSucess", (data) => {
-      this.setState({
-        failReason:null,
-          loggedIn: false,
-          serverUrl: '',
-          name: data.name,
-          password: '',
-          lobbyError: null,
-          gameSettings: Object.assign({}, gameConfig, clientConfig),
-          register: false
+      socket.on("RegisterSucess", (data) => {
+        this.setState({
+          failReason:null,
+            loggedIn: false,
+            serverUrl: '',
+            name: data.name,
+            password: '',
+            lobbyError: null,
+            gameSettings: Object.assign({}, gameConfig, clientConfig),
+            register: false
+        });
       });
-    });
     });
   }
 
     onLogin (values) {
-
       this.state.socket.emit('logIn', {
           name: values.name,
           password:values.password,
           server: values.server
       });
-
     }
 
     registerUser (values) {
@@ -131,7 +121,6 @@ class App extends React.Component {
 
     onLogout () {
         this.setState({
-            serverUrl: null,
             loggedIn: false,
             lobbyError: null
         });

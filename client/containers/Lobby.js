@@ -95,10 +95,12 @@ class Lobby extends React.Component {
             });
 
             socket.on('currentRoomDeleted', (data) => {
+              console.log("client currentRoomDeleted " + data);
                 this.setState({
                   isGameStarted: false,
                   currentRoomId: null
                 });
+                console.log("this.state.currentRoomId " + this.state.currentRoomId);
             });
 
             socket.on('onReadyClient', (data) => {
@@ -179,6 +181,7 @@ class Lobby extends React.Component {
     }
 
     onLeaveRoom (roomId) {
+      console.log("leave button " + roomId);
         if (this.state.socket) {
             this.state.socket.emit('leaveRoom', { roomId: roomId });
         }

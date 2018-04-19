@@ -59,7 +59,6 @@ function start () {
       });
 
         socket.on('logIn', (data) => {
-
           User.getUserByUsername( data.name, function (err, post) {
             if (err) return next(err);
             if (post!== null ) {
