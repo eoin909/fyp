@@ -115,6 +115,13 @@ function Room ({ owner, game, gameMode, deleteRoom}) {
     function leave (client) {
       client.setColor(null);
       client.setReady(false);
+      if (gameMode === 'Teams'){
+        if (team1.has(client.getId())){
+          team1.delete(client.getId());
+        } else if (team2.has(client.getId())){
+          team2.delete(client.getId());
+        }
+      }
       clients.delete(client);
         if (game.isStarted()) {
             for (const roomClient of clients) {

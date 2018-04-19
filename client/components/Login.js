@@ -29,7 +29,7 @@ class Login extends React.Component {
 
                 <div className="login-page">
                 {this.props.failReason ? (<span className="login-error centered">Incorrect username or password.</span>):(null)}
-
+                {this.props.registered ? (<span className="login-register centered">User Registered</span>):(null)}
                     <form
                         className="form"
                         onSubmit={ (event) => {
@@ -105,7 +105,8 @@ class Login extends React.Component {
 Login.propTypes = {
     submitHandler: React.PropTypes.func.isRequired,
     changePage: React.PropTypes.func.isRequired,
-    failReason: React.PropTypes.string
+    failReason: React.PropTypes.string,
+    registered: React.PropTypes.string
 };
 
 module.exports = Login;

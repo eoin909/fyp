@@ -52,7 +52,8 @@ class App extends React.Component {
             name: data.name,
             password: data.password,
             lobbyError: null,
-            gameSettings: Object.assign({}, gameConfig, clientConfig)
+            gameSettings: Object.assign({}, gameConfig, clientConfig),
+            registered:null
         });
       });
 
@@ -64,8 +65,8 @@ class App extends React.Component {
             password: '',
             lobbyError: null,
             logInFailure:true,
-            failReason: data.reason
-
+            failReason: data.reason,
+            registered:null
         });
       });
 
@@ -83,14 +84,15 @@ class App extends React.Component {
 
       socket.on("RegisterSucess", (data) => {
         this.setState({
-          failReason:null,
+            failReason:null,
             loggedIn: false,
             serverUrl: '',
             name: data.name,
             password: '',
             lobbyError: null,
             gameSettings: Object.assign({}, gameConfig, clientConfig),
-            register: false
+            register: false,
+            registered: true
         });
       });
     });
@@ -191,6 +193,7 @@ class App extends React.Component {
                             submitHandler={ this.onLogin.bind(this) }
                             changePage= { this.changePage.bind(this) }
                             failReason={ this.state.failReason }
+                            registered={ this.state.registered }
 
                         />
 
